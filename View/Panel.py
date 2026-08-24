@@ -567,6 +567,15 @@ archivo_3 = crear_bloque_archivo(
     "Archivo 3"
 
 )
+
+archviBase = crear_bloque_archivo(
+
+    tab_archivos,
+
+    "Archivo Base"
+
+)
+ 
  
  
 # BOTÓN VALIDAR
