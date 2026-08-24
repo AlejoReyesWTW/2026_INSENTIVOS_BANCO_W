@@ -548,7 +548,7 @@ archivo_1 = crear_bloque_archivo(
 
     tab_archivos,
 
-    "Archivo 1"
+    "Directorio Nacional"
 
 )
  
@@ -556,7 +556,7 @@ archivo_2 = crear_bloque_archivo(
 
     tab_archivos,
 
-    "Archivo 2"
+    "Formato novedades subgerente oficina para seguros"
 
 )
  
@@ -564,7 +564,7 @@ archivo_3 = crear_bloque_archivo(
 
     tab_archivos,
 
-    "Archivo 3"
+    "Base Temporal Completa SS"
 
 )
 
@@ -572,10 +572,17 @@ archviBase = crear_bloque_archivo(
 
     tab_archivos,
 
-    "Archivo Base"
+    "Base Banco Completa SS"
 
 )
  
+archivoBaseSeguris = crear_bloque_archivo(
+
+    tab_archivos,
+
+    "Base Seguros – Actualizada."
+
+)
  
  
 # BOTÓN VALIDAR
