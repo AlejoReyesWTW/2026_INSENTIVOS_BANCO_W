@@ -1,26 +1,31 @@
 import customtkinter as ctk
+from customtkinter import CTkImage
 from tkinter import filedialog
 from datetime import datetime
+from PIL import Image
 import openpyxl
 import os
+import sys
 
 # CONFIGURACIÓN GENERAL
 ctk.set_appearance_mode("dark")
 # COLORES
-COLOR_WTW = "#6F2CFF"
-COLOR_WTW_HOVER = "#8248FF"
-COLOR_FONDO = "#15151A"
+COLOR_WTW = "#FF6900"
+COLOR_WTW_HOVER = "#00A3AD"
+COLOR_FONDO = "#ffffff"
 COLOR_PANEL = "#202027"
 COLOR_PANEL_2 = "#292931"
 
-COLOR_TEXTO = "#FFFFFF"
-COLOR_TEXTO_SECUNDARIO = "#B8B8C2"
+COLOR_TEXTO = "#1F7797"
+COLOR_TEXTO_SECUNDARIO = "#181818"
 
 COLOR_OK = "#22C55E"
 COLOR_WARNING = "#F59E0B"
 COLOR_ERROR = "#EF4444"
 
-COLOR_DESHABILITADO = "#44444D"
+COLOR_DESHABILITADO = "#7F33CF"
+
+BASE_DIR= os.path.dirname(os.path.abspath(__file__))
 
 # ESTRUCTURA DE LOS ARCHIVOS
 #
@@ -41,16 +46,22 @@ COLOR_DESHABILITADO = "#44444D"
 ESTRUCTURAS_REQUERIDAS = {
     "Directorio Nacional": {
         "hojas": {
-            "Datos": ["Nombre", "Identificación", "Fecha", "Ciudad"],
-            "Paises": ["Código", "País", "Región"],
-            "diomio": ["ID", "Descripción"],
+            "DIRECTORIO ACT": ["OFICINA", "COD", "R", "Z", "COORD RED ASIGNADO", "SUBGERENTE", "SUBGERENTE REEMPLAZO", "AUXILIAR OPERATIVO DE OFICINA",
+                            "OFICINA CUENTA CON CAN", "MUNICIPIO DE UBICACION CAN", "SUBGERENTE COMERCIAL DE EXPANSION  ( CAN)", "GERENTE DE OFICINA", "GERENTE DE ZONA", "GERENTE REGIONAL"]
         }
     },
-    "Formato novedades subgerente oficina para seguros": {
-        "hojas": {"Información": ["Código", "Descripción", "Valor"]}
-    },
-    "Base Temporal Completa SS": {"hojas": {"Registros": ["ID", "Estado", "Fecha"]}},
-    "Base Banco Completa SS": {"hojas": {"Registros": ["ID", "Estado", "Fecha"]}},
+    "Formato novedades subgerente oficina para seguros": { "fila_encabezado": 3,
+        "hojas": {"Hoja1": ["CEDULA", "NOMBRE", "CARGO", "CODIGO OFICINA", "OFICINA", "USUARIO (Iniciales de 3 letras)", "INICIO (DD/MM/AAAA)", "FIN (DD/MM/AAAA)", "DIAS", "CEDULA", "NOMBRE", "CARGO", "CODIGO OFICINA", "OFICINA", "MOTIVO DE REEMPLAZO", "USUARIO (Iniciales de 3 letras)"],
+    }},
+    
+    "Base Temporal Completa SS": {"hojas": {"Activos Jun 2026": ["CEDULA", "COLABORADOR", "CARGO", "FECHA INGRESO", "VICEPRESIDENCIA", "REGIONAL", "ZONA", "CENTRO DE COSTOS", "COD OFIC", "OFICINA","LOCA", "LOCALIDAD PAGO", "TELEFONO", "EMAIL", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "CAJA DE COMPENSACIÓN"],       
+    "Ingresos Jun": ["CEDULA", "COLABORADOR", "CARGO", "FECHA INGRESO", "VICEPRESIDENCIA", "REGIONAL", "ZONA", "CENTRO DE COSTOS" , "COD OFIC", "OFICINA", "LOCA", "LOCALIDAD PAGO", "TELEFONO", "EMAIL", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "CAJA DE COMPENSACION"],
+    "Retirados Jun": ["CEDULA", "COLABORADOR", "CARGO", "FECHA INGRESO", "VICEPRESIDENCIA", "REGIONAL", "ZONA", "CENTRO DE COSTO" , "COD OFIC", "OFICINA", "LOCA", "LOCALIDAD PAGO", "TELEFONO", "EMAIL", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "CAJA DE COMPENSACION"]}},
+    
+    "Base Banco Completa SS": {"hojas": {"Base Banco Activos al 31 Jun": ["CEDULA", "CUENTA CLIENTE", "COLABORADOR", "COD CARGO", "COD GRADO", "CARGO", "FECHA INGRESO", "FECHA FIN CONTRATO", "VICEPRESIDENCIA", "GERENCIA","AREA", "ESTADO", "TIPO NOMINA", "CENTRO DE COSTOS", "LOCALIDAD", "COD OFIC", "OFICINA", "LOCA", "LOCALIDA PAGO", "CODIGO JEFE", "JEFE INMEDIATO", "EMAIL", "TELEFONO", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "FONDO DE CESANTIAS", "CAJA DE COMPENSACIÓN FAMILIAR"],       
+    "Ingresos Jun 2026": ["CEDULA", "CUENTA CLIENTE", "COLABORADOR", "COD CARGO", "COD GRADO", "CARGO", "FECHA INGRESO", "FECHA FIN CONTRATO", "VICEPRESIDENCIA", "GERENCIA","AREA", "ESTADO", "TIPO NOMINA", "CENTRO DE COSTOS", "LOCALIDAD", "COD OFIC", "OFICINA", "LOCA", "LOCALIDA PAGO", "CODIGO JEFE", "JEFE INMEDIATO", "EMAIL", "TELEFONO", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "FONDO DE CESANTIAS", "CAJA DE COMPENSACIÓN FAMILIAR"],
+    "Retiros Jun 2026": ["CEDULA", "CUENTA CLIENTE", "COLABORADOR", "COD CARGO", "COD GRADO", "CARGO", "FECHA INGRESO", "FECHA RETIRO", "VICEPRESIDENCIA", "GERENCIA","AREA", "ESTADO", "TIPO NOMINA", "CENTRO DE COSTOS", "LOCALIDAD", "COD OFC", "OFICINA", "LOCA", "LOCALIDAD PAGO", "CODIGO JEFE", "JEFE INMEDIATO", "EMAIL", "TELEFONO", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "FONDO DE CESANTÍAS", "CAJAS DE COMPENSACIÓN"]}},
+    
     "Base Seguros – Actualizada": {"hojas": {"Registros": ["ID", "Estado", "Fecha"]}},
 }
 
@@ -129,8 +140,15 @@ def validar_excel(ruta, tipo_archivo):
             hoja = libro[nombre_hoja]
 
             # LEER PRIMERA FILA
+            fila_encabezado = estructura.get("fila_encabezado", 1)
+
             primera_fila = next(
-                hoja.iter_rows(min_row=1, max_row=1, values_only=True), None
+                hoja.iter_rows(
+                    min_row=fila_encabezado,
+                    max_row=fila_encabezado,
+                    values_only=True
+                ),
+                None
             )
             if primera_fila is None:
                 errores.append(f"La hoja '{nombre_hoja}' está vacía.")
@@ -276,7 +294,7 @@ def crear_bloque_archivo(parent, tipo_archivo):
     # ESTADO
 
     estado = ctk.CTkLabel(
-        fila, text="● Pendiente", width=130, text_color=COLOR_TEXTO_SECUNDARIO
+        fila, text="● Pendiente", width=130, text_color=COLOR_WTW
     )
 
     estado.pack(side="left")
@@ -378,16 +396,27 @@ header = ctk.CTkFrame(app, height=80, fg_color=COLOR_PANEL, corner_radius=0)
 header.pack(fill="x")
 header.pack_propagate(False)
 
-
-titulo = ctk.CTkLabel(
-    header, text="Banco W", font=("Arial", 28, "bold"), text_color=COLOR_WTW
+# CARGAR LOGO
+ruta_logo = os.path.join(BASE_DIR, "..", "IMG", "imagen (1).png")
+logo_img = Image.open(ruta_logo)  # <-- pon aquí la ruta de tu imagen
+ 
+logo_ctk = CTkImage(
+    light_image=logo_img,
+    dark_image=logo_img,
+    size=(120, 50)  # <-- ajusta ancho x alto según tu logo
 )
-
+ 
+titulo = ctk.CTkLabel(
+    header,
+    image=logo_ctk,
+    text="",  # importante: vacío, si no aparece texto encima
+)
+ 
 titulo.pack(side="left", padx=30)
 
 
 subtitulo = ctk.CTkLabel(
-    header, text="Control de Automatización", font=("Arial", 18), text_color=COLOR_TEXTO
+    header, text="Control de Automatización", font=("Arial", 18), text_color=COLOR_FONDO
 )
 
 subtitulo.pack(side="left")
@@ -426,7 +455,8 @@ tab_control = tabs.add("Control")
 # PESTAÑA ARCHIVOS
 
 titulo_archivos = ctk.CTkLabel(
-    tab_archivos, text="Archivos de entrada", font=("Arial", 24, "bold")
+    tab_archivos, text="Archivos de entrada", font=("Arial", 24, "bold"),
+    text_color=COLOR_WTW_HOVER,
 )
 
 titulo_archivos.pack(anchor="w", padx=25, pady=(25, 5))
@@ -495,6 +525,7 @@ btn_iniciar = ctk.CTkButton(
     hover_color=COLOR_DESHABILITADO,
     state="disabled",
     command=iniciar_bot,
+    text_color=COLOR_TEXTO_SECUNDARIO
 )
 
 btn_iniciar.pack(pady=10)
@@ -503,7 +534,9 @@ btn_iniciar.pack(pady=10)
 
 
 titulo_logs = ctk.CTkLabel(
-    tab_logs, text="Log de ejecución", font=("Arial", 24, "bold")
+    tab_logs, text="Log de ejecución", font=("Arial", 24, "bold"),
+    text_color=COLOR_TEXTO_SECUNDARIO
+,
 )
 
 titulo_logs.pack(anchor="w", padx=25, pady=(25, 10))
@@ -533,7 +566,8 @@ log_text.configure(state="disabled")
 
 
 titulo_errores = ctk.CTkLabel(
-    tab_errores, text="Registro de errores", font=("Arial", 24, "bold")
+    tab_errores, text="Registro de errores", font=("Arial", 24, "bold"),
+    text_color=COLOR_TEXTO_SECUNDARIO,
 )
 
 titulo_errores.pack(anchor="w", padx=25, pady=(25, 10))
@@ -555,7 +589,7 @@ errores_text.configure(state="disabled")
 
 
 titulo_control = ctk.CTkLabel(
-    tab_control, text="Control del asistente", font=("Arial", 24, "bold")
+    tab_control, text="Control del asistente", font=("Arial", 24, "bold"), text_color=COLOR_TEXTO_SECUNDARIO,
 )
 
 titulo_control.pack(pady=(30, 20))
@@ -614,7 +648,7 @@ info_label = ctk.CTkLabel(
     info_frame,
     text=("Registros procesados: 0    |    " "Errores: 0    |    " "Tiempo: 00:00:00"),
     font=("Consolas", 14),
-    text_color=COLOR_TEXTO_SECUNDARIO,
+    text_color=COLOR_FONDO,
 )
 
 info_label.pack(pady=20)
