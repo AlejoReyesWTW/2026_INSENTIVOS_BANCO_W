@@ -1,0 +1,63 @@
+	El objetivo de este bot que considero que no es tan bot sino un aplicativo de escritorio, porque no veo en donde, el bot se quede trabajando solo, por lo que opino que no es un bot sino un app de escritorio, no se tu que opinas, pero ayudame a ender esto, el objetivo  es que debe generar 2 archvios excel como respuesta al procesamiento de 5 insumos de entrada tambien en excel por parte de la operacion, para manejar incentivos a los trabajadores, cajeros, y subgerentes del banco.
+
+hay 2 procesos muy grandes los cuales corresponden a cada archivo, el archivo Base que se entregara sera en ese formato, "base incentivos MES_AÑO soy prevenido.xlsx" ese archivo se va armar con 3 pestañas llamadas Ventas, Base Subgerente , Base red agencias.
+	
+	Donde la primera sera la principal, y las otras 2 seran de soporte para las formulas que se implementaran en la primera pestaña de ventas, es decir estas 2 ultimas seran como BD para llenar la tabla de ventas.
+
+	• La pestaña ventas tiene la siguiente tabla con los siguientes nombres de columnas:
+
+	CODIGO AGENCIA
+	AGENCIA
+	IDENTIFICACION
+	NOMBRES_APELLIDOS_ASEGURADO
+	CUENTA CLIENTE
+	FECHA TRANSACCION 
+	VALOR PRIMA
+	PRODUCTO
+	COD_CAJERO
+	CC_CAJERO
+	NOMBRE_CAJERO
+	CAJERO
+	SUBGERENTE
+	COD
+	AGENCIA2
+	CC_SUBGERENTE
+	NOMBRE_SUBGERENTE
+	CC_NOVEDAD_SUBGERENTE
+	NOMBRE_NOVEDAD_SUBGERENTE
+	
+	Las columnas que va a tomar del archivo "soy prevenido junio 2026" son A, B, E ,  G, H, Q, S, V, AB, AC  y las ubicara en esta pestaña de "ventas" en las columnas A, B, C, D y el orden de copiado se vera asi:
+
+A <- A
+B <- B
+C <- G
+D <- E
+	E <- H
+	F <- V
+	G <- S
+H<- Q
+	I <- AB *aplicar el filtro para quitar todo junto con el @ en el codigo de usuario
+	J < - se aplacara la siguiente formula " =BUSCARX(@I:I;'Base red agencias'!A:A;'Base red agencias'!C:C;1;0)"
+	K -> AC
+	L <- se aplicara la siguiente formula "=+SI([@[VALOR PRIMA]]=2414;137;SI([@[VALOR PRIMA]]=5072;290;SI([@[VALOR PRIMA]]=6644;378;SI([@[VALOR PRIMA]]=11597;658;0))))" 
+	M<- se aplicara la siguiente formula "=+SI([@[VALOR PRIMA]]=2414;34;SI([@[VALOR PRIMA]]=5072;72;SI([@[VALOR PRIMA]]=6644;95;SI([@[VALOR PRIMA]]=11597;164;0))))"
+	N <- A
+	O <- B
+	P <- se aplicara la siguiente formula "=BUSCARX(@N:N;'Base subgerentes'!H:H;'Base subgerentes'!A:A;1;0)"
+	Q <- se aplicara la siguiente formula "=BUSCARX(@N:N;'Base subgerentes'!H:H;'Base subgerentes'!B:B;1;0)"
+	R = P
+	S = Q
+
+asi quedaria la columna izquierda es el archivo que estaremos armando, y la derecha es del otro archivo o pestañas de donde copiaremos la informacion 
+	
+
+	ARMADO y llenado de la tabla en la vista de Ventas 
+
+
+	• Para traer el nombre (celda Q) y cedula (celda P) del subgerente debo usar el código de la agencia, ese código lo usa para traer la información desde la pestaña de Base subgerentes 
+	Para buscar la cedula del subgerente(operativo) mediante el nombre, se busca en el archivo llamado Base banco completa SS se buscara por nombre en la columna U y si encuentra coincidencia exacta toma el numero de cedula que esta en la columna T
+	
+	• Para las columnas R y S lo que se hace es replicar (copiar y pegar) las columnas P y Q que son las columnas de novedades.
+
+AUNQUE ESO YA ES DETALLE PORQUE EN LA ASIGNACION ESTA TODO COMO DEBE TRAER CADA DATAy de donde,
+	
