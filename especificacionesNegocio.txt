@@ -145,3 +145,35 @@ Base incentivos - junio 2026 Soy Prevenido.
 	• Formato novedades subgerente oficina para seguros f
 SOY PREVENIDO JUNIO 2026
 	Estos archivos son los que se pedirán desde la parte visual (panel.py) para poder llenar el archivo Base incentivos - junio 2026 Soy Prevenido. Es decir interactuaremos con varios archivos, para ir llenando uno solo
+
+
+NOMBRE DE LOS ARCHIVOS INSUMOS PARA AJUSTAR EL CONFIG:
+
+Base Banco Completa SS Jun 2026	A	CEDULA     
+	C	COLABORADOR
+LLENADO PARA SUBGERENTES	F	CARGO
+	I	VICEPRESIDENCIA
+	J	GERENCIA
+	N	CENTRO DE COSTOS
+	O	LOCALIDAD
+	P	COD OFIC
+	Q	OFICINA
+	S	LOCALIDA PAGO
+	Y	SEXO
+		
+soy prevenido junio 2026	A	CODIGO_AGENCIA
+	B	NOMBRE_AGENCIA
+	E	NOMBRE_ASEGURADO
+LLENADO DATOS DEL AFILIADO (VENTAS)	G	NUMERO_IDENTIFICACION
+	H	CUENTA_CLIENTE
+	Q	TRANSACCION2
+	S	VALOR_PRIMA
+	V	FECHA_TRANSACCION
+	AB	COD_CAJERO
+	AC	NOMBRE_CAJERO
+		
+Base Seguros - Actualizada	A	CEDULA
+	B	USUARIO WINDOWS
+LLENADO PARA RED DE AGENCIAS	C	INICIALES
+	D	COLABORADOR
+	E	CARGO
