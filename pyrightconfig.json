@@ -1,0 +1,27 @@
+{
+    "_comment": "Configuracion para Pyright / Pylance. Silencia warnings de libs sin type stubs (customtkinter, PIL, tkinter).",
+
+    "include": [
+        "View",
+        "Insumos"
+    ],
+
+    "exclude": [
+        ".venv",
+        ".git",
+        ".atl",
+        ".pi",
+        "openspec",
+        "__pycache__"
+    ],
+
+    "reportMissingTypeStubs": "none",
+    "reportMissingImports": "none",
+    "reportUnknownParameterType": "none",
+    "reportUnknownVariableType": "none",
+    "reportUnknownMemberType": "none",
+    "reportUnknownArgumentType": "none",
+    "reportAttributeAccessIssue": "none",
+
+    "pythonPath": ".venv\\Scripts\\python.exe"
+}

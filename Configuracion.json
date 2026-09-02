@@ -1,0 +1,226 @@
+{
+    "_meta": {
+        "descripcion": "Estructura esperada de los archivos Excel de entrada para el Panel de Automatización.",
+        "nota": "Aqui NO se pone el nombre fisico del archivo. Por ejemplo: Agosto.xlsx / Septiembre.xlsx / Octubre.xlsx. Todos pueden ser validos. Lo que se valida es la estructura interna del Excel.",
+        "version": "1.0",
+        "ciclo": "Jun 2026"
+    },
+    "estructuras_requeridas": {
+        "Directorio Nacional": {
+            "hojas": {
+                "DIRECTORIO ACT": [
+                    "OFICINA",
+                    "COD",
+                    "R",
+                    "Z",
+                    "COORD RED ASIGNADO",
+                    "SUBGERENTE",
+                    "SUBGERENTE REEMPLAZO",
+                    "AUXILIAR OPERATIVO DE OFICINA",
+                    "OFICINA CUENTA CON CAN",
+                    "MUNICIPIO DE UBICACION CAN",
+                    "SUBGERENTE COMERCIAL DE EXPANSION  ( CAN)",
+                    "GERENTE DE OFICINA",
+                    "GERENTE DE ZONA",
+                    "GERENTE REGIONAL"
+                ]
+            }
+        },
+        "Formato novedades subgerente oficina para seguros": {
+            "fila_encabezado": 3,
+            "hojas": {
+                "Hoja1": [
+                    "CEDULA",
+                    "NOMBRE",
+                    "CARGO",
+                    "CODIGO OFICINA",
+                    "OFICINA",
+                    "USUARIO (Iniciales de 3 letras)",
+                    "INICIO (DD/MM/AAAA)",
+                    "FIN (DD/MM/AAAA)",
+                    "DIAS",
+                    "CEDULA",
+                    "NOMBRE",
+                    "CARGO",
+                    "CODIGO OFICINA",
+                    "OFICINA",
+                    "MOTIVO DE REEMPLAZO",
+                    "USUARIO (Iniciales de 3 letras)"
+                ]
+            }
+        },
+        "Base Temporal Completa SS": {
+            "hojas": {
+                "Activos Jun 2026": [
+                    "CEDULA",
+                    "COLABORADOR",
+                    "CARGO",
+                    "FECHA INGRESO",
+                    "VICEPRESIDENCIA",
+                    "REGIONAL",
+                    "ZONA",
+                    "CENTRO DE COSTOS",
+                    "COD OFIC",
+                    "OFICINA",
+                    "LOCA",
+                    "LOCALIDAD PAGO",
+                    "TELEFONO",
+                    "EMAIL",
+                    "FECHA NACIMIENTO",
+                    "SEXO",
+                    "ENTIDAD DE SALUD",
+                    "FONDO DE PENSIONES",
+                    "CAJA DE COMPENSACIÓN"
+                ],
+                "Ingresos Jun": [
+                    "CEDULA",
+                    "COLABORADOR",
+                    "CARGO",
+                    "FECHA INGRESO",
+                    "VICEPRESIDENCIA",
+                    "REGIONAL",
+                    "ZONA",
+                    "CENTRO DE COSTOS",
+                    "COD OFIC",
+                    "OFICINA",
+                    "LOCA",
+                    "LOCALIDAD PAGO",
+                    "TELEFONO",
+                    "EMAIL",
+                    "FECHA NACIMIENTO",
+                    "SEXO",
+                    "ENTIDAD DE SALUD",
+                    "FONDO DE PENSIONES",
+                    "CAJA DE COMPENSACION"
+                ],
+                "Retirados Jun": [
+                    "CEDULA",
+                    "COLABORADOR",
+                    "CARGO",
+                    "FECHA INGRESO",
+                    "VICEPRESIDENCIA",
+                    "REGIONAL",
+                    "ZONA",
+                    "CENTRO DE COSTO",
+                    "COD OFIC",
+                    "OFICINA",
+                    "LOCA",
+                    "LOCALIDAD PAGO",
+                    "TELEFONO",
+                    "EMAIL",
+                    "FECHA NACIMIENTO",
+                    "SEXO",
+                    "ENTIDAD DE SALUD",
+                    "FONDO DE PENSIONES",
+                    "CAJA DE COMPENSACION"
+                ]
+            }
+        },
+        "Base Banco Completa SS": {
+            "hojas": {
+                "Base Banco Activos al 31 Jun": [
+                    "CEDULA",
+                    "CUENTA CLIENTE",
+                    "COLABORADOR",
+                    "COD CARGO",
+                    "COD GRADO",
+                    "CARGO",
+                    "FECHA INGRESO",
+                    "FECHA FIN CONTRATO",
+                    "VICEPRESIDENCIA",
+                    "GERENCIA",
+                    "AREA",
+                    "ESTADO",
+                    "TIPO NOMINA",
+                    "CENTRO DE COSTOS",
+                    "LOCALIDAD",
+                    "COD OFIC",
+                    "OFICINA",
+                    "LOCA",
+                    "LOCALIDA PAGO",
+                    "CODIGO JEFE",
+                    "JEFE INMEDIATO",
+                    "EMAIL",
+                    "TELEFONO",
+                    "FECHA NACIMIENTO",
+                    "SEXO",
+                    "ENTIDAD DE SALUD",
+                    "FONDO DE PENSIONES",
+                    "FONDO DE CESANTIAS",
+                    "CAJA DE COMPENSACIÓN FAMILIAR"
+                ],
+                "Ingresos Jun 2026": [
+                    "CEDULA",
+                    "CUENTA CLIENTE",
+                    "COLABORADOR",
+                    "COD CARGO",
+                    "COD GRADO",
+                    "CARGO",
+                    "FECHA INGRESO",
+                    "FECHA FIN CONTRATO",
+                    "VICEPRESIDENCIA",
+                    "GERENCIA",
+                    "AREA",
+                    "ESTADO",
+                    "TIPO NOMINA",
+                    "CENTRO DE COSTOS",
+                    "LOCALIDAD",
+                    "COD OFIC",
+                    "OFICINA",
+                    "LOCA",
+                    "LOCALIDA PAGO",
+                    "CODIGO JEFE",
+                    "JEFE INMEDIATO",
+                    "EMAIL",
+                    "TELEFONO",
+                    "FECHA NACIMIENTO",
+                    "SEXO",
+                    "ENTIDAD DE SALUD",
+                    "FONDO DE PENSIONES",
+                    "FONDO DE CESANTIAS",
+                    "CAJA DE COMPENSACIÓN FAMILIAR"
+                ],
+                "Retiros Jun 2026": [
+                    "CEDULA",
+                    "CUENTA CLIENTE",
+                    "COLABORADOR",
+                    "COD CARGO",
+                    "COD GRADO",
+                    "CARGO",
+                    "FECHA INGRESO",
+                    "FECHA RETIRO",
+                    "VICEPRESIDENCIA",
+                    "GERENCIA",
+                    "AREA",
+                    "ESTADO",
+                    "TIPO NOMINA",
+                    "CENTRO DE COSTOS",
+                    "LOCALIDAD",
+                    "COD OFC",
+                    "OFICINA",
+                    "LOCA",
+                    "LOCALIDAD PAGO",
+                    "CODIGO JEFE",
+                    "JEFE INMEDIATO",
+                    "EMAIL",
+                    "TELEFONO",
+                    "FECHA NACIMIENTO",
+                    "SEXO",
+                    "ENTIDAD DE SALUD",
+                    "FONDO DE PENSIONES",
+                    "FONDO DE CESANTÍAS",
+                    "CAJAS DE COMPENSACIÓN"
+                ]
+            }
+        },
+        "Base Seguros – Actualizada": {
+            "hojas": {
+                "Registros": [
+                    "ID",
+                    "Estado",
+                    "Fecha"
+                ]
+            }
+        }
+    }
+}

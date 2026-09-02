@@ -1,0 +1,13 @@
+# WTW - 2026 Incentivos Banco W
+# Dependencias del Panel de Control de Automatización (View/Panel.py)
+# Formato: pin exacto para reproducir el entorno con `pip install -r requirements.txt`.
+
+# --- Dependencias directas ---
+customtkinter==6.0.0   # UI (ventana, tabs, botones, inputs, scroll, textbox)
+openpyxl==3.1.5        # Lectura/validación de archivos Excel (.xlsx)
+pillow==12.3.0         # Carga del logo (PIL) usado por CTkImage
+
+# --- Dependencias transitivas (no importar directo, pero requeridas) ---
+darkdetect==0.8.0      # requerida por customtkinter (modo claro/oscuro del sistema)
+et_xmlfile==2.0.0      # requerida por openpyxl
+packaging==26.3        # requerida por customtkinter (utilidades de versión)

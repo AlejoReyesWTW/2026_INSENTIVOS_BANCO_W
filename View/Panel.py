@@ -1,11 +1,12 @@
+import json
+import os
+from datetime import datetime
+from tkinter import filedialog
+
 import customtkinter as ctk
 from customtkinter import CTkImage
-from tkinter import filedialog
-from datetime import datetime
-from PIL import Image
 import openpyxl
-import os
-import sys
+from PIL import Image
 
 # CONFIGURACIÓN GENERAL
 ctk.set_appearance_mode("dark")
@@ -25,45 +26,43 @@ COLOR_ERROR = "#EF4444"
 
 COLOR_DESHABILITADO = "#7F33CF"
 
-BASE_DIR= os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_PATH = os.path.join(BASE_DIR, "..", "Configuracion.json")
+
 
 # ESTRUCTURA DE LOS ARCHIVOS
 #
 # IMPORTANTE:
 #
-# Aquí NO ponemos el nombre físico del archivo.
-#
-# Por ejemplo:
-#
-# Agosto.xlsx
-# Septiembre.xlsx
-# Octubre.xlsx
-#
-# Todos pueden ser válidos.
-#
-# Lo que se valida es la estructura interna del Excel.
+# Aqui NO se pone el nombre fisico del archivo (ej. Agosto.xlsx / Septiembre.xlsx /
+# Octubre.xlsx). Todos pueden ser validos. Lo que se valida es la estructura interna
+# del Excel, definida en Configuracion.json bajo la clave "estructuras_requeridas".
 
-ESTRUCTURAS_REQUERIDAS = {
-    "Directorio Nacional": {
-        "hojas": {
-            "DIRECTORIO ACT": ["OFICINA", "COD", "R", "Z", "COORD RED ASIGNADO", "SUBGERENTE", "SUBGERENTE REEMPLAZO", "AUXILIAR OPERATIVO DE OFICINA",
-                            "OFICINA CUENTA CON CAN", "MUNICIPIO DE UBICACION CAN", "SUBGERENTE COMERCIAL DE EXPANSION  ( CAN)", "GERENTE DE OFICINA", "GERENTE DE ZONA", "GERENTE REGIONAL"]
-        }
-    },
-    "Formato novedades subgerente oficina para seguros": { "fila_encabezado": 3,
-        "hojas": {"Hoja1": ["CEDULA", "NOMBRE", "CARGO", "CODIGO OFICINA", "OFICINA", "USUARIO (Iniciales de 3 letras)", "INICIO (DD/MM/AAAA)", "FIN (DD/MM/AAAA)", "DIAS", "CEDULA", "NOMBRE", "CARGO", "CODIGO OFICINA", "OFICINA", "MOTIVO DE REEMPLAZO", "USUARIO (Iniciales de 3 letras)"],
-    }},
-    
-    "Base Temporal Completa SS": {"hojas": {"Activos Jun 2026": ["CEDULA", "COLABORADOR", "CARGO", "FECHA INGRESO", "VICEPRESIDENCIA", "REGIONAL", "ZONA", "CENTRO DE COSTOS", "COD OFIC", "OFICINA","LOCA", "LOCALIDAD PAGO", "TELEFONO", "EMAIL", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "CAJA DE COMPENSACIÓN"],       
-    "Ingresos Jun": ["CEDULA", "COLABORADOR", "CARGO", "FECHA INGRESO", "VICEPRESIDENCIA", "REGIONAL", "ZONA", "CENTRO DE COSTOS" , "COD OFIC", "OFICINA", "LOCA", "LOCALIDAD PAGO", "TELEFONO", "EMAIL", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "CAJA DE COMPENSACION"],
-    "Retirados Jun": ["CEDULA", "COLABORADOR", "CARGO", "FECHA INGRESO", "VICEPRESIDENCIA", "REGIONAL", "ZONA", "CENTRO DE COSTO" , "COD OFIC", "OFICINA", "LOCA", "LOCALIDAD PAGO", "TELEFONO", "EMAIL", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "CAJA DE COMPENSACION"]}},
-    
-    "Base Banco Completa SS": {"hojas": {"Base Banco Activos al 31 Jun": ["CEDULA", "CUENTA CLIENTE", "COLABORADOR", "COD CARGO", "COD GRADO", "CARGO", "FECHA INGRESO", "FECHA FIN CONTRATO", "VICEPRESIDENCIA", "GERENCIA","AREA", "ESTADO", "TIPO NOMINA", "CENTRO DE COSTOS", "LOCALIDAD", "COD OFIC", "OFICINA", "LOCA", "LOCALIDA PAGO", "CODIGO JEFE", "JEFE INMEDIATO", "EMAIL", "TELEFONO", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "FONDO DE CESANTIAS", "CAJA DE COMPENSACIÓN FAMILIAR"],       
-    "Ingresos Jun 2026": ["CEDULA", "CUENTA CLIENTE", "COLABORADOR", "COD CARGO", "COD GRADO", "CARGO", "FECHA INGRESO", "FECHA FIN CONTRATO", "VICEPRESIDENCIA", "GERENCIA","AREA", "ESTADO", "TIPO NOMINA", "CENTRO DE COSTOS", "LOCALIDAD", "COD OFIC", "OFICINA", "LOCA", "LOCALIDA PAGO", "CODIGO JEFE", "JEFE INMEDIATO", "EMAIL", "TELEFONO", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "FONDO DE CESANTIAS", "CAJA DE COMPENSACIÓN FAMILIAR"],
-    "Retiros Jun 2026": ["CEDULA", "CUENTA CLIENTE", "COLABORADOR", "COD CARGO", "COD GRADO", "CARGO", "FECHA INGRESO", "FECHA RETIRO", "VICEPRESIDENCIA", "GERENCIA","AREA", "ESTADO", "TIPO NOMINA", "CENTRO DE COSTOS", "LOCALIDAD", "COD OFC", "OFICINA", "LOCA", "LOCALIDAD PAGO", "CODIGO JEFE", "JEFE INMEDIATO", "EMAIL", "TELEFONO", "FECHA NACIMIENTO", "SEXO", "ENTIDAD DE SALUD", "FONDO DE PENSIONES", "FONDO DE CESANTÍAS", "CAJAS DE COMPENSACIÓN"]}},
-    
-    "Base Seguros – Actualizada": {"hojas": {"Registros": ["ID", "Estado", "Fecha"]}},
-}
+
+def cargar_estructuras(ruta: str) -> dict:
+    """Carga el diccionario de estructuras requeridas desde el JSON de configuracion."""
+    if not os.path.exists(ruta):
+        raise RuntimeError(
+            f"No se encontro el archivo de configuracion: {ruta}. "
+            "Verifica que Configuracion.json exista en la raiz del proyecto."
+        )
+    try:
+        with open(ruta, encoding="utf-8") as f:
+            config = json.load(f)
+    except json.JSONDecodeError as e:
+        raise RuntimeError(
+            f"Configuracion.json tiene un formato JSON invalido: {e}"
+        ) from e
+    except OSError as e:
+        raise RuntimeError(f"No se pudo leer {ruta}: {e}") from e
+    if "estructuras_requeridas" not in config:
+        raise RuntimeError(
+            f"El archivo {ruta} no contiene la clave 'estructuras_requeridas'."
+        )
+    return config["estructuras_requeridas"]
+
+
+ESTRUCTURAS_REQUERIDAS = cargar_estructuras(CONFIG_PATH)
 
 # VARIABLES GLOBALES
 
@@ -101,12 +100,16 @@ def agregar_error(mensaje):
     errores_text.see("end")
     errores_text.configure(state="disabled")
 
+
 # VALIDAR EXTENSIÓN
+
 
 def validar_extension(ruta):
     return ruta.lower().endswith(".xlsx")
 
+
 # VALIDAR ESTRUCTURA DEL EXCEL
+
 
 def validar_excel(ruta, tipo_archivo):
 
@@ -144,11 +147,9 @@ def validar_excel(ruta, tipo_archivo):
 
             primera_fila = next(
                 hoja.iter_rows(
-                    min_row=fila_encabezado,
-                    max_row=fila_encabezado,
-                    values_only=True
+                    min_row=fila_encabezado, max_row=fila_encabezado, values_only=True
                 ),
-                None
+                None,
             )
             if primera_fila is None:
                 errores.append(f"La hoja '{nombre_hoja}' está vacía.")
@@ -167,7 +168,7 @@ def validar_excel(ruta, tipo_archivo):
             for columna in columnas_requeridas:
                 if columna not in encabezados:
                     errores.append(
-                        f"Hoja '{nombre_hoja}': " f"falta la columna '{columna}'."
+                        f"Hoja '{nombre_hoja}': falta la columna '{columna}'."
                     )
 
         libro.close()
@@ -186,8 +187,8 @@ def validar_excel(ruta, tipo_archivo):
 
 def comprobar_archivos_completos():
     todos_validos = True
-    for tipo, datos in archivos.items():
-        if datos["valido"] is not True:
+    for datos in archivos.values():
+        if not datos["valido"]:
             todos_validos = False
             break
     if todos_validos:
@@ -206,7 +207,9 @@ def comprobar_archivos_completos():
             text="● Esperando archivos válidos", text_color=COLOR_WARNING
         )
 
+
 # SELECCIONAR
+
 
 def seleccionar_archivo(tipo_archivo):
     datos = archivos[tipo_archivo]
@@ -239,7 +242,6 @@ def seleccionar_archivo(tipo_archivo):
     # ARCHIVO VÁLIDO
 
     if valido:
-
         datos["valido"] = True
         estado.configure(text="● Archivo válido", text_color=COLOR_OK)
         mensaje.configure(
@@ -250,7 +252,6 @@ def seleccionar_archivo(tipo_archivo):
     # ARCHIVO INVÁLIDO
 
     else:
-
         datos["valido"] = False
         estado.configure(text="● Archivo inválido", text_color=COLOR_ERROR)
         mensaje.configure(text=errores[0], text_color=COLOR_ERROR)
@@ -293,9 +294,7 @@ def crear_bloque_archivo(parent, tipo_archivo):
 
     # ESTADO
 
-    estado = ctk.CTkLabel(
-        fila, text="● Pendiente", width=130, text_color=COLOR_WTW
-    )
+    estado = ctk.CTkLabel(fila, text="● Pendiente", width=130, text_color=COLOR_WTW)
 
     estado.pack(side="left")
 
@@ -328,7 +327,9 @@ def crear_bloque_archivo(parent, tipo_archivo):
         "valido": False,
     }
 
+
 # INICIAR BOT
+
 
 def iniciar_bot():
 
@@ -346,14 +347,15 @@ def iniciar_bot():
 
     # ejecutar_robot()
 
+
 # PAUSAR BOT
+
 
 def pausar_bot():
 
     global bot_pausado
 
     if not bot_ejecutando:
-
         agregar_log("No hay un bot ejecutándose.", "WARNING")
 
         return
@@ -364,7 +366,9 @@ def pausar_bot():
 
     agregar_log("Asistente pausado.", "WARNING")
 
+
 # REANUDAR BOT
+
 
 def reanudar_bot():
     global bot_pausado
@@ -399,19 +403,19 @@ header.pack_propagate(False)
 # CARGAR LOGO
 ruta_logo = os.path.join(BASE_DIR, "..", "IMG", "imagen (1).png")
 logo_img = Image.open(ruta_logo)  # <-- pon aquí la ruta de tu imagen
- 
+
 logo_ctk = CTkImage(
     light_image=logo_img,
     dark_image=logo_img,
-    size=(120, 50)  # <-- ajusta ancho x alto según tu logo
+    size=(120, 50),  # <-- ajusta ancho x alto según tu logo
 )
- 
+
 titulo = ctk.CTkLabel(
     header,
     image=logo_ctk,
     text="",  # importante: vacío, si no aparece texto encima
 )
- 
+
 titulo.pack(side="left", padx=30)
 
 
@@ -455,7 +459,9 @@ tab_control = tabs.add("Control")
 # PESTAÑA ARCHIVOS
 
 titulo_archivos = ctk.CTkLabel(
-    tab_archivos, text="Archivos de entrada", font=("Arial", 24, "bold"),
+    tab_archivos,
+    text="Archivos de entrada",
+    font=("Arial", 24, "bold"),
     text_color=COLOR_WTW_HOVER,
 )
 
@@ -474,24 +480,18 @@ descripcion = ctk.CTkLabel(
 
 descripcion.pack(anchor="w", padx=25, pady=(0, 15))
 
-scroll_archivos = ctk.CTkScrollableFrame(
-    tab_archivos,
-    fg_color="transparent"
-)
+scroll_archivos = ctk.CTkScrollableFrame(tab_archivos, fg_color="transparent")
 
-scroll_archivos.pack(
-    fill="both",
-    expand=True,
-    padx=10,
-    pady=10
-)
+scroll_archivos.pack(fill="both", expand=True, padx=10, pady=10)
 
 # CREAR LOS BLOQUES DENTRO DEL FRAME CON SCROLL
 # (antes se creaban en tab_archivos, por eso no se podía bajar)
 
 crear_bloque_archivo(scroll_archivos, "Directorio Nacional")
 
-crear_bloque_archivo(scroll_archivos, "Formato novedades subgerente oficina para seguros")
+crear_bloque_archivo(
+    scroll_archivos, "Formato novedades subgerente oficina para seguros"
+)
 
 crear_bloque_archivo(scroll_archivos, "Base Temporal Completa SS")
 
@@ -525,7 +525,7 @@ btn_iniciar = ctk.CTkButton(
     hover_color=COLOR_DESHABILITADO,
     state="disabled",
     command=iniciar_bot,
-    text_color=COLOR_TEXTO_SECUNDARIO
+    text_color=COLOR_TEXTO_SECUNDARIO,
 )
 
 btn_iniciar.pack(pady=10)
@@ -534,9 +534,10 @@ btn_iniciar.pack(pady=10)
 
 
 titulo_logs = ctk.CTkLabel(
-    tab_logs, text="Log de ejecución", font=("Arial", 24, "bold"),
-    text_color=COLOR_TEXTO_SECUNDARIO
-,
+    tab_logs,
+    text="Log de ejecución",
+    font=("Arial", 24, "bold"),
+    text_color=COLOR_TEXTO_SECUNDARIO,
 )
 
 titulo_logs.pack(anchor="w", padx=25, pady=(25, 10))
@@ -566,7 +567,9 @@ log_text.configure(state="disabled")
 
 
 titulo_errores = ctk.CTkLabel(
-    tab_errores, text="Registro de errores", font=("Arial", 24, "bold"),
+    tab_errores,
+    text="Registro de errores",
+    font=("Arial", 24, "bold"),
     text_color=COLOR_TEXTO_SECUNDARIO,
 )
 
@@ -589,7 +592,10 @@ errores_text.configure(state="disabled")
 
 
 titulo_control = ctk.CTkLabel(
-    tab_control, text="Control del asistente", font=("Arial", 24, "bold"), text_color=COLOR_TEXTO_SECUNDARIO,
+    tab_control,
+    text="Control del asistente",
+    font=("Arial", 24, "bold"),
+    text_color=COLOR_TEXTO_SECUNDARIO,
 )
 
 titulo_control.pack(pady=(30, 20))
@@ -646,7 +652,7 @@ info_frame.pack(fill="x", padx=80, pady=30)
 
 info_label = ctk.CTkLabel(
     info_frame,
-    text=("Registros procesados: 0    |    " "Errores: 0    |    " "Tiempo: 00:00:00"),
+    text=("Registros procesados: 0    |    Errores: 0    |    Tiempo: 00:00:00"),
     font=("Consolas", 14),
     text_color=COLOR_FONDO,
 )
