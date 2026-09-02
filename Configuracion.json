@@ -1,9 +1,15 @@
 {
-    "_meta": {
+"_meta": {
         "descripcion": "Estructura esperada de los archivos Excel de entrada para el Panel de Automatización.",
         "nota": "Aqui NO se pone el nombre fisico del archivo. Por ejemplo: Agosto.xlsx / Septiembre.xlsx / Octubre.xlsx. Todos pueden ser validos. Lo que se valida es la estructura interna del Excel.",
-        "version": "1.0",
-        "ciclo": "Jun 2026"
+        "version": "1.1",
+        "ciclo": "Jun 2026",
+        "cambios_v1_1": [
+        "Agregado insumo 'Soy Prevenido' con estructura de Ventas (10 columnas del mapeo oficial)",
+        "Corregido 'Base Seguros - Actualizada': ahora tiene pestaña BANCO con 5 columnas (no Registros)",
+        "Nueva sección 'tabla_primas' (config-driven, 4 valores hardcoded)",
+        "Nueva sección 'filtros_cargo' (constantes para filtros)"
+        ]
     },
     "estructuras_requeridas": {
         "Directorio Nacional": {
@@ -215,12 +221,48 @@
         },
         "Base Seguros – Actualizada": {
             "hojas": {
-                "Registros": [
-                    "ID",
-                    "Estado",
-                    "Fecha"
+                "BANCO": [
+                    "CEDULA",
+                    "USUARIO WINDOWS",
+                    "INICIALES",
+                    "COLABORADOR",
+                    "CARGO"
                 ]
             }
+        },
+        "Soy Prevenido": {
+            "hojas": {
+                "Ventas": [
+                    "CODIGO_AGENCIA",
+                    "NOMBRE_AGENCIA",
+                    "NOMBRE_ASEGURADO",
+                    "NUMERO_IDENTIFICACION",
+                    "CUENTA_CLIENTE",
+                    "TRANSACCION2",
+                    "VALOR_PRIMA",
+                    "FECHA_TRANSACCION",
+                    "COD_CAJERO",
+                    "NOMBRE_CAJERO"
+                ]
+            },
+            "nota": "Estas son las 10 columnas requeridas para el mapeo. El archivo real puede tener columnas adicionales que se preservan sin tocar."
         }
+    },
+    "tabla_primas": [
+        {"prima": 2414, "cajero": 137, "subgerente": 34},
+        {"prima": 5072, "cajero": 290, "subgerente": 72},
+        {"prima": 6644, "cajero": 378, "subgerente": 95},
+        {"prima": 11597, "cajero": 658, "subgerente": 164}
+    ],
+    "filtros_cargo": {
+        "subgerente_oficina": "SUBGERENTE DE OFICINA",
+        "red_agencias": [
+            "CAJERO(A) AUXILIAR",
+            "CAJERO(A) PRINCIPAL",
+            "SUBGERENTE DE OFICINA",
+            "AUXILIAR OPERATIVO",
+            "AUXILIAR OPERATIVO DE PLANTA",
+            "CAJERO(A) PRINCIPAL  DE PLANTA"
+        ]
     }
 }

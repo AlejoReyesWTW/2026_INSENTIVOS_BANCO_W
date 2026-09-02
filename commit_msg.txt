@@ -1,0 +1,6 @@
+feat(PR-1): Setup + Domain con TDD para incentivos-ciclo1-2026
+
+PR-1 incluye Setup (pytest, estructura, Config v1.1) y todo el dominio:
+ciclo, insumo, errores, mapeo, tabla_primas y formulas.
+
+60 tests pasando.
