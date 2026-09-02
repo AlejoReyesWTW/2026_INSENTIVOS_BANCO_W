@@ -1,0 +1,26 @@
+{
+    "_comment": "Configuracion local del editor (VS Code) para este proyecto. Apunta al venv correcto y silencia alertas conocidas de Pylance para libs sin type stubs.",
+
+    "python.defaultInterpreterPath": ".venv\\Scripts\\python.exe",
+    "python.analysis.autoImportCompletions": true,
+
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingTypeStubs": "none",
+        "reportMissingImports": "none",
+        "reportUnknownParameterType": "none",
+        "reportUnknownVariableType": "none",
+        "reportUnknownMemberType": "none",
+        "reportUnknownArgumentType": "none",
+        "reportUnknownLambdaType": "none",
+        "reportMissingTypeArgument": "none",
+        "reportAttributeAccessIssue": "none"
+    },
+
+    "python.analysis.extraPaths": [
+        ".venv\\Lib\\site-packages"
+    ],
+
+    "files.associations": {
+        "*.xlsx": "excel"
+    }
+}

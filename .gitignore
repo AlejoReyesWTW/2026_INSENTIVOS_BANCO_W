@@ -1,0 +1,36 @@
+# Local Pi runtime state
+.atl/
+
+# Python — entornos virtuales
+.venv/
+venv/
+env/
+
+# Python — bytecode y caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python — caches de herramientas
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Python — artefactos de packaging
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Variables de entorno / secrets
+.env
+.env.local
+
+# Archivos temporales y de sistema
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
