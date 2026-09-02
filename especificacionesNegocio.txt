@@ -1,3 +1,5 @@
+2:59 p. m.
+
 	El objetivo de este bot que considero que no es tan bot sino un aplicativo de escritorio, porque no veo en donde, el bot se quede trabajando solo, por lo que opino que no es un bot sino un app de escritorio, no se tu que opinas, pero ayudame a ender esto, el objetivo  es que debe generar 2 archvios excel como respuesta al procesamiento de 5 insumos de entrada tambien en excel por parte de la operacion, para manejar incentivos a los trabajadores, cajeros, y subgerentes del banco.
 
 hay 2 procesos muy grandes los cuales corresponden a cada archivo, el archivo Base que se entregara sera en ese formato, "base incentivos MES_AÑO soy prevenido.xlsx" ese archivo se va armar con 3 pestañas llamadas Ventas, Base Subgerente , Base red agencias.
@@ -61,3 +63,85 @@ asi quedaria la columna izquierda es el archivo que estaremos armando, y la dere
 
 AUNQUE ESO YA ES DETALLE PORQUE EN LA ASIGNACION ESTA TODO COMO DEBE TRAER CADA DATAy de donde,
 	
+	La pestaña "Base subgerentes" , tiene estas columnas:
+	CEDULA     
+	EMPLEADO                              
+	CARGO
+	NOM_VICE                   
+	NOM_GER
+	CENCOS_NOM                              
+	NOM_LOCALIDAD                                  
+	COD AGENCIA
+	NOMBRE OFICINA
+	CIUDAD DE PAGO
+	SEX
+	
+	Y se llenaran tomando la información del archivo "Base Banco Completa SS Jun 2026" de la pestaña la primera pestaña el cual se le aplicaran filtros en la columna  E "CARGO" y solo se filtrara por este filtro 
+	SUBGERENTE DE OFICINA                    
+	
+	Y una vez filtrado se seleccionaran las siguientes columnas de ese archivo filtrado: A, C,F,I,J,N,O,P,Q,S,Y
+	
+	Y se asignaran asi nuevamente en el archivo base incentivos MES_AÑO soy prevenido.xlsx
+	A<-A
+	B<-C
+	C<-F
+	D<-I
+	E<-J
+	F<-N
+	G<-O
+	H<-P
+	I<-Q
+	J<-S
+	K<-Y
+	
+
+	La pestaña "Base red agencias" , tiene estas columnas:
+	USUARIO WINDOWS
+	INICIALES
+	CEDULA     
+	EMPLEADO                              
+	CARGO
+	
+	Y se llenaran tomando la información del archivo "Base Seguros - Actualizada" de la pestaña llamada BANCO el cual se le aplicaran filtros en la columna  E "CARGO" y solo se filtrara por estos filtros
+
+
+	CAJERO(A) AUXILIAR                              
+	CAJERO(A) PRINCIPAL                             
+	SUBGERENTE DE OFICINA                           
+	AUXILIAR OPERATIVO                              
+	AUXILIAR OPERATIVO DE PLANTA
+	CAJERO(A) PRINCIPAL  DE PLANTA
+	
+	Luego de tener la informacion filtrada necesitare copiar las columnas A, B, C, D, E
+	
+	La Pestaña "Base red agencias" tiene estas columnas:
+	USUARIO WINDOWS
+	INICIALES
+	CEDULA     
+	EMPLEADO                              
+	CARGO
+	
+	A las cuales asignaremos asi :
+	
+A <- B
+	B <- C
+	C <- A
+	D <- D
+	E <- E
+	
+	El archivo "base incentivos MES_AÑO soy prevenido" es el archivo que se armara para entregar a la operación (nomina) 
+	
+	 junto con las tablas de valores de costos de incentivos (mas adelante se explica), de cajeros y subgerentes es decir Los archivos que este bot entregara son 2 y se llamaran literalmente así en formato XLSX: 
+	
+PLANILLA DE PAGO INCENTIVOS SOY PREVENIDO.
+Base incentivos - junio 2026 Soy Prevenido. 
+
+
+	• Sus archivos de insumo de entrada seran estos:
+	• Base Banco Completa SS junio 2026 
+	• Base Seguros – Actualizada 
+	• Base Temporal Completa SS
+	• DIRECTORIO NACIONAL
+	• Formato novedades subgerente oficina para seguros f
+SOY PREVENIDO JUNIO 2026
+	Estos archivos son los que se pedirán desde la parte visual (panel.py) para poder llenar el archivo Base incentivos - junio 2026 Soy Prevenido. Es decir interactuaremos con varios archivos, para ir llenando uno solo
