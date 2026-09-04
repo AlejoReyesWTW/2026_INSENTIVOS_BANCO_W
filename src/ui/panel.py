@@ -1,13 +1,15 @@
 """Panel raíz de la UI.
 
-Compone los 4 tabs y conecta el botón "Iniciar Bot" con ProcesarCiclo.
+Compone los 3 tabs (Archivos, Ejecución, Control) y conecta el botón
+"Iniciar" con ProcesarCiclo. El tab Ejecución contiene log + errores
+apilados verticalmente en la misma vista.
 """
 
 from __future__ import annotations
 
 import customtkinter as ctk
-from PIL import Image
 from customtkinter import CTkImage
+from PIL import Image
 
 from src.application.procesar_ciclo import ProcesarCiclo
 from src.domain.insumo import TipoInsumo
@@ -24,14 +26,13 @@ from src.ui.constants import (
     RUTA_PLANTILLA,
     RUTA_SALIDA,
 )
-from src.ui.tabs import TabArchivos, TabControl, TabErrores, TabLogs
+from src.ui.tabs import TabArchivos, TabControl, TabLogs
 
 
 class Panel:
     """Ventana principal de la aplicación."""
 
     def __init__(self) -> None:
-        # Inicializar apariencia y crear ventana.
         ctk.set_appearance_mode("light")
         self.app = ctk.CTk()
         self.app.title("WTW - Control de Automatización")
@@ -39,20 +40,15 @@ class Panel:
         self.app.minsize(ANCHO_VENTANA, ALTO_VENTANA)
         self.app.configure(fg_color=COLOR_FONDO)
 
-        # Logo (si existe).
         self._cargar_logo()
 
-        # Estado del bot.
         self.bot_ejecutando = False
 
-        # Infraestructura (singleton).
         self.config_loader = ConfigLoader(RUTA_CONFIG)
         self.logger = LoggerDiario(RUTA_LOGS)
 
-        # Crear tabs.
         self._crear_tabs()
 
-        # Conectar callbacks.
         self.tab_archivos.set_on_iniciar(self._on_iniciar_click)
 
     def _cargar_logo(self) -> None:
@@ -85,21 +81,20 @@ class Panel:
             self.logger.warning(f"No se pudo cargar el logo: {e}")
 
     def _crear_tabs(self) -> None:
-        """Crea el tabview y los 4 tabs."""
+        """Crea el tabview con 3 tabs (Archivos, Ejecución, Control)."""
+        # BASE_TEMPORAL queda fuera por ahora (no se usa en el procesamiento).
         tipos_insumo = [
-            TipoInsumo.DIRECTORIO_NACIONAL,
-            TipoInsumo.NOVEDADES_SUBGERENTE,
-            TipoInsumo.BASE_TEMPORAL,
+            TipoInsumo.SOY_PREVENIDO,
             TipoInsumo.BASE_BANCO,
             TipoInsumo.BASE_SEGUROS,
-            TipoInsumo.SOY_PREVENIDO,
+            TipoInsumo.DIRECTORIO_NACIONAL,
+            TipoInsumo.NOVEDADES_SUBGERENTE,
         ]
         self.tabs = ctk.CTkTabview(self.app, fg_color=COLOR_FONDO)
         self.tabs.pack(fill="both", expand=True, padx=20, pady=20)
 
         tab_archivos_frame = self.tabs.add("Archivos")
         tab_logs_frame = self.tabs.add("Ejecución")
-        tab_errores_frame = self.tabs.add("Errores")
         tab_control_frame = self.tabs.add("Control")
 
         self.tab_archivos = TabArchivos(
@@ -114,24 +109,27 @@ class Panel:
         self.tab_logs = TabLogs(parent=tab_logs_frame)
         self.tab_logs.frame.pack(fill="both", expand=True)
 
-        self.tab_errores = TabErrores(parent=tab_errores_frame)
-        self.tab_errores.frame.pack(fill="both", expand=True)
-
         self.tab_control = TabControl(parent=tab_control_frame)
         self.tab_control.frame.pack(fill="both", expand=True)
 
     def _log(self, mensaje: str, nivel: str = "INFO") -> None:
-        """Log a UI y archivo."""
+        """Log a UI (log de ejecución + registro de errores) y a archivo."""
         self.tab_logs.agregar(mensaje, nivel)
-        self.logger.info(mensaje) if nivel == "INFO" else None
+        if nivel == "ERROR":
+            self.tab_logs.agregar_error(mensaje)
+            self.logger.error(mensaje)
+        elif nivel == "WARNING":
+            self.logger.warning(mensaje)
+        else:
+            self.logger.info(mensaje)
 
     def _error(self, mensaje: str) -> None:
-        """Log error a UI y pestaña de errores."""
-        self.tab_errores.agregar(mensaje)
+        """Log error a UI (registro de errores) y a archivo."""
+        self.tab_logs.agregar_error(mensaje)
         self.logger.error(mensaje)
 
     def _on_iniciar_click(self) -> None:
-        """Handler del botón Iniciar Bot: ejecuta ProcesarCiclo."""
+        """Handler del botón INICIAR: ejecuta ProcesarCiclo."""
         if self.bot_ejecutando:
             return
         insumos = self.tab_archivos.obtener_insumos()
@@ -176,10 +174,6 @@ class Panel:
     def ejecutar(self) -> None:
         """Inicia el mainloop de la UI."""
         self.app.mainloop()
-
-
-class _SetupPaths:
-    """Helper para resolver paths del proyecto de forma robusta."""
 
 
 # Asegurar que los directorios de salida/logs existan.

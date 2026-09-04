@@ -1,11 +1,9 @@
 """Widget: bloque para seleccionar un archivo de insumo.
 
-Cada bloque muestra:
-- Nombre del tipo de insumo (ej: "Soy Prevenido")
-- Entry con la ruta seleccionada (readonly)
-- Estado (Pendiente / Validando / Válido / Inválido)
-- Botón "Buscar" (filedialog)
-- Mensaje de error o éxito
+Layout:
+- Fila 1: [Nombre del tipo] ......... [Estado] [Buscar]
+- Fila 2: Etiqueta dinámica (vacía al inicio; muestra el archivo cargado
+  o los errores de validación cuando aplica)
 """
 
 from __future__ import annotations
@@ -18,9 +16,10 @@ import customtkinter as ctk
 from src.domain.insumo import TipoInsumo
 from src.ui.constants import (
     COLOR_ERROR,
+    COLOR_INPUT_BG,
+    COLOR_INPUT_BORDER,
+    COLOR_INPUT_TEXT,
     COLOR_OK,
-    COLOR_PANEL,
-    COLOR_PANEL_2,
     COLOR_WTW,
     COLOR_WTW_HOVER,
 )
@@ -35,57 +34,62 @@ class BloqueArchivo(ctk.CTkFrame):
         tipo: TipoInsumo,
         on_change: callable = None,  # type: ignore[type-arg]
     ) -> None:
-        super().__init__(parent, fg_color=COLOR_PANEL, corner_radius=10)
+        super().__init__(
+            parent,
+            fg_color=COLOR_INPUT_BG,
+            border_color=COLOR_INPUT_BORDER,
+            border_width=1,
+            corner_radius=8,
+        )
         self.tipo = tipo
         self._on_change = on_change
         self._ruta: Path | None = None
 
-        # Fila principal.
+        self._crear_widgets()
+
+    def _crear_widgets(self) -> None:
+        # Fila 1: nombre del tipo (izq) + estado + botón Buscar (der).
         fila = ctk.CTkFrame(self, fg_color="transparent")
         fila.pack(fill="x", padx=15, pady=(12, 5))
 
-        # Label con nombre del tipo.
         ctk.CTkLabel(
             fila,
-            text=tipo.value,
-            width=200,
+            text=self.tipo.value,
+            width=250,
             anchor="w",
             font=("Arial", 14, "bold"),
+            text_color=COLOR_INPUT_TEXT,
         ).pack(side="left")
 
-        # Entry con la ruta.
-        self.entry = ctk.CTkEntry(
-            fila,
-            height=38,
-            placeholder_text="Seleccione un archivo .xlsx...",
-            fg_color=COLOR_PANEL_2,
-            border_color=COLOR_PANEL_2,
-        )
-        self.entry.pack(side="left", fill="x", expand=True, padx=10)
-
-        # Estado.
         self.estado = ctk.CTkLabel(
-            fila, text="● Pendiente", width=130, text_color=COLOR_WTW
+            fila, text="● Pendiente", width=140, text_color=COLOR_WTW
         )
-        self.estado.pack(side="left")
+        self.estado.pack(side="left", padx=(20, 0))
 
-        # Botón Buscar.
         ctk.CTkButton(
             fila,
             text="Buscar",
-            width=100,
+            width=110,
             height=35,
             fg_color=COLOR_WTW,
             hover_color=COLOR_WTW_HOVER,
             command=self._on_buscar_click,
-        ).pack(side="left", padx=(10, 5))
+        ).pack(side="right")
 
-        # Mensaje.
-        self.mensaje = ctk.CTkLabel(self, text="", anchor="w", font=("Arial", 12))
-        self.mensaje.pack(fill="x", padx=215, pady=(0, 10))
+        # Fila 2: etiqueta dinámica (vacía inicialmente).
+        self.label_info = ctk.CTkLabel(
+            self,
+            text="",
+            anchor="w",
+            font=("Arial", 11),
+            text_color=COLOR_INPUT_TEXT,
+            wraplength=900,
+            justify="left",
+        )
+        self.label_info.pack(fill="x", padx=15, pady=(2, 10))
 
     def _on_buscar_click(self) -> None:
-        """Abre el filedialog y filtra archivos temporales."""
+        """Abre el filedialog para seleccionar el archivo."""
         ruta = filedialog.askopenfilename(
             title=f"Seleccionar {self.tipo.value}",
             filetypes=[("Archivos Excel", "*.xlsx")],
@@ -97,12 +101,14 @@ class BloqueArchivo(ctk.CTkFrame):
             self._on_change(self.tipo, Path(ruta))
 
     def set_ruta(self, ruta: Path) -> None:
-        """Setea la ruta manualmente (sin disparar callback)."""
+        """Setea la ruta y muestra el nombre del archivo en la etiqueta."""
         self._ruta = ruta
-        self.entry.delete(0, "end")
-        self.entry.insert(0, str(ruta))
+        # Mostrar nombre del archivo en la etiqueta dinámica.
+        self.label_info.configure(
+            text=f"📄 {ruta.name}",
+            text_color=COLOR_INPUT_TEXT,
+        )
         self._set_estado("● Pendiente", COLOR_WTW)
-        self.mensaje.configure(text="")
 
     def get_ruta(self) -> Path | None:
         """Retorna la ruta seleccionada o None si no hay archivo."""
@@ -110,18 +116,29 @@ class BloqueArchivo(ctk.CTkFrame):
 
     def set_estado_validando(self) -> None:
         """Marca el bloque como 'Validando...'."""
-        self._set_estado("● Validando...", "#F59E0B")  # amarillo
+        self._set_estado("● Validando...", "#F59E0B")
+        self.label_info.configure(
+            text="Validando estructura del archivo...",
+            text_color="#9ca3af",
+        )
 
     def set_estado_valido(
         self, mensaje: str = "Estructura validada correctamente."
     ) -> None:
-        """Marca el bloque como válido."""
+        """Marca el bloque como válido y muestra mensaje de éxito."""
         self._set_estado("● Archivo válido", COLOR_OK)
-        self.mensaje.configure(text=mensaje, text_color=COLOR_OK)
+        nombre = self._ruta.name if self._ruta else "archivo"
+        self.label_info.configure(
+            text=f"✓ {nombre} — {mensaje}",
+            text_color=COLOR_OK,
+        )
 
     def set_estado_invalido(self, errores: list[str]) -> None:
-        """Marca el bloque como inválido."""
+        """Marca el bloque como inválido y muestra los errores."""
         self._set_estado("● Archivo inválido", COLOR_ERROR)
-        # Mostrar solo el primer error en el label (los demás van al log).
-        primer_error = errores[0] if errores else "Error desconocido"
-        self.mensaje.configure(text=primer_error, text_color=COLOR_ERROR)
+        # Mostrar TODOS los errores en la etiqueta dinámica (no solo el primero).
+        if len(errores) == 1:
+            texto = f"✗ {errores[0]}"
+        else:
+            texto = "✗ Errores:\n  • " + "\n  • ".join(errores)
+        self.label_info.configure(text=texto, text_color=COLOR_ERROR)

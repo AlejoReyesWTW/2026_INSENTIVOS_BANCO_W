@@ -80,7 +80,7 @@ class TabArchivos:
 
         self.btn_iniciar = ctk.CTkButton(
             self.frame,
-            text="▶  INICIAR BOT",
+            text="INICIAR",
             width=240,
             height=45,
             font=("Arial", 14, "bold"),
@@ -95,6 +95,7 @@ class TabArchivos:
     def _crear_bloques(self) -> None:
         """Crea un BloqueArchivo por cada tipo de insumo."""
         for tipo in self.tipos:
+            # archivo_esperado="" -> no muestra label rojo (comentado en widget).
             bloque = BloqueArchivo(
                 self.scroll, tipo=tipo, on_change=self._on_bloque_change
             )
