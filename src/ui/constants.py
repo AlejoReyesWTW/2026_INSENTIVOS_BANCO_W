@@ -17,6 +17,12 @@ COLOR_WARNING = "#F59E0B"
 COLOR_ERROR = "#EF4444"
 COLOR_DESHABILITADO = "#7F33CF"
 
+# Colores para el estilo claro de los inputs.
+COLOR_INPUT_BG = "#ffffff"  # Fondo blanco del input
+COLOR_INPUT_BORDER = "#d0d0d0"  # Borde gris claro
+COLOR_INPUT_TEXT = "#181818"  # Texto oscuro
+COLOR_LABEL_HINT = "#dc2626"  # Rojo para labels de "Por favor proporcione..."
+
 # Paths del proyecto (asumiendo que se ejecuta desde la raíz).
 RUTA_BASE = Path(__file__).resolve().parent.parent.parent
 RUTA_CONFIG = RUTA_BASE / "Configuracion.json"
@@ -27,5 +33,5 @@ RUTA_SALIDA = RUTA_BASE / "Insumos" / "Salida"
 RUTA_LOGS = RUTA_BASE / "Logs"
 
 # Tamaño de la ventana principal.
-ANCHO_VENTANA = 1050
-ALTO_VENTANA = 650
+ANCHO_VENTANA = 1100
+ALTO_VENTANA = 700
