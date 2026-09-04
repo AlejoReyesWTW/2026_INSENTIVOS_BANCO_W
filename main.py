@@ -7,7 +7,6 @@ from __future__ import annotations
 
 from src.ui.panel import Panel
 
-
 def main() -> None:
     """Inicia la aplicación."""
     panel = Panel()
