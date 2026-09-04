@@ -33,7 +33,9 @@ def normalizar_header(nombre: str | None) -> str:
         return ""
     # Descomponer caracteres con acento (NFD separa la base de la marca).
     sin_acentos = "".join(
-        c for c in unicodedata.normalize("NFD", nombre) if unicodedata.category(c) != "Mn"
+        c
+        for c in unicodedata.normalize("NFD", nombre)
+        if unicodedata.category(c) != "Mn"
     )
     normalizado = sin_acentos.lower().strip()
     # Colapsar espacios y underscores repetidos en un solo espacio.

@@ -48,8 +48,11 @@ _VARIANTES_MES: tuple[str, ...] = tuple(
 )
 
 # Regex: captura mes (cualquier variante) + año opcional (2 o 4 dígitos).
+# Usamos lookarounds explícitos en lugar de \b para que "_" sea tratado
+# como separador válido (los nombres de archivo lo usan).
 _PATTERN = re.compile(
-    r"\b(" + "|".join(_VARIANTES_MES) + r")\b" r"(?:[\s\-_/]*(\d{2,4}))?",
+    r"(?<![a-zA-Z0-9])(" + "|".join(_VARIANTES_MES) + r")(?![a-zA-Z0-9])"
+    r"(?:[\s\-_/]*(\d{2,4}))?",
     re.IGNORECASE,
 )
 
