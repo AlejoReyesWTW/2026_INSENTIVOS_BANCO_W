@@ -11,3 +11,7 @@ pillow==12.3.0         # Carga del logo (PIL) usado por CTkImage
 darkdetect==0.8.0      # requerida por customtkinter (modo claro/oscuro del sistema)
 et_xmlfile==2.0.0      # requerida por openpyxl
 packaging==26.3        # requerida por customtkinter (utilidades de versión)
+
+# --- Testing ---
+pytest==8.3.3          # Framework de tests
+pytest-cov==5.0.0      # Cobertura de código

@@ -1,6 +1,6 @@
 @echo off
 REM Launcher del Panel WTW.
-REM Activa el venv del proyecto y arranca View/Panel.py con el Python correcto.
+REM Activa el venv del proyecto y arranca main.py con el Python correcto.
 REM Doble click desde el explorador, o ejecutar desde la terminal.
 
 setlocal
@@ -16,6 +16,6 @@ if not exist ".venv\Scripts\python.exe" (
 )
 
 call ".venv\Scripts\activate.bat"
-python View\Panel.py
+python main.py
 
 endlocal
