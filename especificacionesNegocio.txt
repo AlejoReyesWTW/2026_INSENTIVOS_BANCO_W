@@ -28,16 +28,31 @@ hay 2 procesos muy grandes los cuales corresponden a cada archivo, el archivo Ba
 	CC_NOVEDAD_SUBGERENTE
 	NOMBRE_NOVEDAD_SUBGERENTE
 	
-	Las columnas que va a tomar del archivo "soy prevenido junio 2026" son A, B, E ,  G, H, Q, S, V, AB, AC  y las ubicara en esta pestaña de "ventas" en las columnas A, B, C, D y el orden de copiado se vera asi:
+	Las columnas que va a tomar del archivo "soy prevenido junio 2026" son A, B, E ,  G, H, Q, S, V, AB, AC
+	estos son los nombres de las columnas de Soy prevenido junio 2026 para esa columnas en letras:
 
-A <- A
-B <- B
-C <- G
-D <- E
+	CODIGO_AGENCIA
+	NOMBRE_AGENCIA
+	NOMBRE_ASEGURADO
+	NUMERO_IDENTIFICACION
+	CUENTA_CLIENTE
+	TRANSACCION2
+	VALOR_PRIMA
+	FECHA_TRANSACCION
+	COD_CAJERO
+	NOMBRE_CAJERO
+
+	
+	y las ubicara en esta pestaña de "ventas" en las columnas A, B, C, D y el orden de copiado se vera asi:
+
+	A <- A
+	B <- B
+	C <- G
+	D <- E
 	E <- H
 	F <- V
 	G <- S
-H<- Q
+	H<- Q
 	I <- AB *aplicar el filtro para quitar todo junto con el @ en el codigo de usuario
 	J < - se aplacara la siguiente formula " =BUSCARX(@I:I;'Base red agencias'!A:A;'Base red agencias'!C:C;1;0)"
 	K -> AC
