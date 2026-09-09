@@ -7,6 +7,7 @@ CARGO está en la lista de 6 cargos permitidos, y mapea 5 columnas a la salida.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from src.domain.mapeo import normalizar_header
 from src.infrastructure.excel_reader import ExcelReader
@@ -21,6 +22,7 @@ CARGOS_FILTRO: tuple[str, ...] = (
     "AUXILIAR OPERATIVO",
     "AUXILIAR OPERATIVO DE PLANTA",
     "CAJERO(A) PRINCIPAL  DE PLANTA",
+    "AUXILIAR INTEGRAL",
 )
 
 # Mapeo de columnas: tuplas (nombre_input, nombre_output).
@@ -39,16 +41,25 @@ NOMBRE_HOJA = "BANCO"
 def llenar_base_red_agencias(
     ruta_insumo: Path | str,
     writer: ExcelWriter,
+    logger: Any = None,  # type: ignore[type-arg]
 ) -> int:
     """Filtra Base Seguros por CARGO y llena la pestaña Base red agencias.
 
     Args:
         ruta_insumo: ruta al archivo "Base Seguros – Actualizada" (.xlsx).
         writer: ExcelWriter ya abierto sobre el archivo de salida.
+        logger: opcional, para registrar auditoría detallada.
 
     Returns:
         Cantidad de filas escritas (con CARGO en CARGOS_FILTRO).
     """
+
+    def _log(msg: str) -> None:
+        if logger is not None:
+            logger.info(f"[llenar_base_red_agencias] {msg}")
+
+    _log(f"Inicio. Input: {ruta_insumo}, Hoja: {NOMBRE_HOJA}")
+
     reader = ExcelReader(ruta_insumo)
     try:
         # 1. Leer encabezados (normalizados) de la hoja BANCO.
@@ -56,11 +67,16 @@ def llenar_base_red_agencias(
             NOMBRE_HOJA, fila_encabezado=1, normalizar=True
         )
         headers_idx: dict[str, int] = {h: i for i, h in enumerate(headers)}
+        _log(
+            f"Encabezados leídos ({len(headers_idx)}): {list(headers_idx.keys())[:8]}..."
+        )
 
         # 2. Encontrar la columna CARGO (necesaria para filtrar).
         cargo_idx = headers_idx.get(normalizar_header("CARGO"))
         if cargo_idx is None:
+            _log("ERROR: no se encontró la columna CARGO en el input.")
             return 0
+        _log(f"Columna CARGO encontrada en idx {cargo_idx}")
 
         # 3. Construir mapping: idx_input → pos_salida (1-based).
         input_a_salida: dict[int, int] = {}
@@ -70,8 +86,12 @@ def llenar_base_red_agencias(
             col_norm = normalizar_header(col_input)
             if col_norm in headers_idx:
                 input_a_salida[headers_idx[col_norm]] = pos_salida
+        _log(
+            f"Mapping construido: {len(input_a_salida)}/5 columnas encontradas: {sorted(input_a_salida.values())}"
+        )
 
         if not input_a_salida:
+            _log("ERROR: ninguna columna del mapeo fue encontrada en el input.")
             return 0
 
         # 4. Pre-normalizar la lista de cargos a filtrar.
@@ -79,6 +99,7 @@ def llenar_base_red_agencias(
 
         # 5. Leer filas y filtrar por CARGO.
         datos = reader.leer_hoja(NOMBRE_HOJA, fila_encabezado=1, normalizar=True)
+        _log(f"Total filas leídas del input: {len(datos)}")
 
         filas_para_escribir: list[list] = []
         for fila_dict in datos:
@@ -91,8 +112,21 @@ def llenar_base_red_agencias(
             fila_out: list = [None] * len(MAPEO_BASE_RED_AGENCIAS)
             for idx_input, pos_salida in input_a_salida.items():
                 header = headers[idx_input]
-                fila_out[pos_salida - 1] = fila_dict.get(header)
+                valor = fila_dict.get(header)
+                # La col 1 (USUARIO WINDOWS) se convierte a MAYÚSCULAS
+                # para que BUSCARX en Ventas col J matchee con el
+                # COD_CAJERO del input (que viene en mayúsculas).
+                if pos_salida == 1 and isinstance(valor, str):
+                    valor = valor.upper()
+                fila_out[pos_salida - 1] = valor
             filas_para_escribir.append(fila_out)
+
+        _log(
+            f"Filas que pasaron el filtro CARGO: {len(filas_para_escribir)} (de {len(datos)} totales)"
+        )
+        if len(filas_para_escribir) > 0:
+            muestra_user = filas_para_escribir[0][0]
+            _log(f"Muestra USUARIO WINDOWS (uppercase): '{muestra_user}'")
 
         # 6. Escribir en la pestaña "Base red agencias" (a partir de fila 2).
         if filas_para_escribir:
@@ -101,6 +135,11 @@ def llenar_base_red_agencias(
                 fila_inicio=2,
                 datos=filas_para_escribir,
             )
+            _log(
+                f"Escritura completada: {len(filas_para_escribir)} filas en hoja 'Base red agencias'"
+            )
+        else:
+            _log("ADVERTENCIA: ninguna fila pasó el filtro CARGO.")
 
         return len(filas_para_escribir)
     finally:

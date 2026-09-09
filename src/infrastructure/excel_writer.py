@@ -54,6 +54,11 @@ class ExcelWriter:
                 f"No se encontró el archivo Excel destino: {self.ruta}"
             )
         self._workbook = openpyxl.load_workbook(self.ruta)
+        # Forzar que Excel recalcule TODAS las fórmulas cuando abra el archivo.
+        # Esto asegura que las celdas J, L, M, P, Q, etc. muestren sus valores
+        # inmediatamente (sin necesidad de presionar F9 manualmente).
+        self._workbook.calculation.calcMode = "auto"
+        self._workbook.calculation.fullCalcOnLoad = True
 
     def escribir_datos(
         self,
@@ -128,6 +133,29 @@ class ExcelWriter:
     def guardar(self) -> None:
         """Persiste los cambios al archivo .xlsx."""
         self._workbook.save(self.ruta)
+
+    def set_number_format(
+        self,
+        hoja: str,
+        fila_inicio: int,
+        fila_fin: int,
+        col: int,
+        formato: str,
+    ) -> None:
+        """Aplica un formato numérico a un rango de celdas.
+
+        Args:
+            hoja: nombre de la hoja.
+            fila_inicio: primera fila (1-based, inclusiva).
+            fila_fin: última fila (1-based, inclusiva).
+            col: número de columna (1-based).
+            formato: string de formato Excel (ej: 'dd/mm/yyyy' para fechas).
+        """
+        if hoja not in self._workbook.sheetnames:
+            raise HojaFaltanteError(f"No existe la hoja '{hoja}' en {self.ruta}.")
+        ws = self._workbook[hoja]
+        for fila in range(fila_inicio, fila_fin + 1):
+            ws.cell(row=fila, column=col).number_format = formato
 
     def cerrar(self) -> None:
         """Cierra el workbook (libera el handle del archivo)."""

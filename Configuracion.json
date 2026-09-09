@@ -1,268 +1,288 @@
 {
-"_meta": {
-        "descripcion": "Estructura esperada de los archivos Excel de entrada para el Panel de Automatización.",
-        "nota": "Aqui NO se pone el nombre fisico del archivo. Por ejemplo: Agosto.xlsx / Septiembre.xlsx / Octubre.xlsx. Todos pueden ser validos. Lo que se valida es la estructura interna del Excel.",
-        "version": "1.1",
-        "ciclo": "Jun 2026",
-        "cambios_v1_1": [
-        "Agregado insumo 'Soy Prevenido' con estructura de Ventas (10 columnas del mapeo oficial)",
-        "Corregido 'Base Seguros - Actualizada': ahora tiene pestaña BANCO con 5 columnas (no Registros)",
-        "Nueva sección 'tabla_primas' (config-driven, 4 valores hardcoded)",
-        "Nueva sección 'filtros_cargo' (constantes para filtros)"
-        ]
-    },
-    "estructuras_requeridas": {
-        "Directorio Nacional": {
-            "hojas": {
-                "DIRECTORIO ACT": [
-                    "OFICINA",
-                    "COD",
-                    "R",
-                    "Z",
-                    "COORD RED ASIGNADO",
-                    "SUBGERENTE",
-                    "SUBGERENTE REEMPLAZO",
-                    "AUXILIAR OPERATIVO DE OFICINA",
-                    "OFICINA CUENTA CON CAN",
-                    "MUNICIPIO DE UBICACION CAN",
-                    "SUBGERENTE COMERCIAL DE EXPANSION  ( CAN)",
-                    "GERENTE DE OFICINA",
-                    "GERENTE DE ZONA",
-                    "GERENTE REGIONAL"
-                ]
-            }
-        },
-        "Formato novedades subgerente oficina para seguros": {
-            "fila_encabezado": 3,
-            "hojas": {
-                "Hoja1": [
-                    "CEDULA",
-                    "NOMBRE",
-                    "CARGO",
-                    "CODIGO OFICINA",
-                    "OFICINA",
-                    "USUARIO (Iniciales de 3 letras)",
-                    "INICIO (DD/MM/AAAA)",
-                    "FIN (DD/MM/AAAA)",
-                    "DIAS",
-                    "CEDULA",
-                    "NOMBRE",
-                    "CARGO",
-                    "CODIGO OFICINA",
-                    "OFICINA",
-                    "MOTIVO DE REEMPLAZO",
-                    "USUARIO (Iniciales de 3 letras)"
-                ]
-            }
-        },
-        "Base Temporal Completa SS": {
-            "hojas": {
-                "Activos Jun 2026": [
-                    "CEDULA",
-                    "COLABORADOR",
-                    "CARGO",
-                    "FECHA INGRESO",
-                    "VICEPRESIDENCIA",
-                    "REGIONAL",
-                    "ZONA",
-                    "CENTRO DE COSTOS",
-                    "COD OFIC",
-                    "OFICINA",
-                    "LOCA",
-                    "LOCALIDAD PAGO",
-                    "TELEFONO",
-                    "EMAIL",
-                    "FECHA NACIMIENTO",
-                    "SEXO",
-                    "ENTIDAD DE SALUD",
-                    "FONDO DE PENSIONES",
-                    "CAJA DE COMPENSACIÓN"
-                ],
-                "Ingresos Jun": [
-                    "CEDULA",
-                    "COLABORADOR",
-                    "CARGO",
-                    "FECHA INGRESO",
-                    "VICEPRESIDENCIA",
-                    "REGIONAL",
-                    "ZONA",
-                    "CENTRO DE COSTOS",
-                    "COD OFIC",
-                    "OFICINA",
-                    "LOCA",
-                    "LOCALIDAD PAGO",
-                    "TELEFONO",
-                    "EMAIL",
-                    "FECHA NACIMIENTO",
-                    "SEXO",
-                    "ENTIDAD DE SALUD",
-                    "FONDO DE PENSIONES",
-                    "CAJA DE COMPENSACION"
-                ],
-                "Retirados Jun": [
-                    "CEDULA",
-                    "COLABORADOR",
-                    "CARGO",
-                    "FECHA INGRESO",
-                    "VICEPRESIDENCIA",
-                    "REGIONAL",
-                    "ZONA",
-                    "CENTRO DE COSTO",
-                    "COD OFIC",
-                    "OFICINA",
-                    "LOCA",
-                    "LOCALIDAD PAGO",
-                    "TELEFONO",
-                    "EMAIL",
-                    "FECHA NACIMIENTO",
-                    "SEXO",
-                    "ENTIDAD DE SALUD",
-                    "FONDO DE PENSIONES",
-                    "CAJA DE COMPENSACION"
-                ]
-            }
-        },
-        "Base Banco Completa SS": {
-            "hojas": {
-                "Base Banco Activos al 31 Jun": [
-                    "CEDULA",
-                    "CUENTA CLIENTE",
-                    "COLABORADOR",
-                    "COD CARGO",
-                    "COD GRADO",
-                    "CARGO",
-                    "FECHA INGRESO",
-                    "FECHA FIN CONTRATO",
-                    "VICEPRESIDENCIA",
-                    "GERENCIA",
-                    "AREA",
-                    "ESTADO",
-                    "TIPO NOMINA",
-                    "CENTRO DE COSTOS",
-                    "LOCALIDAD",
-                    "COD OFIC",
-                    "OFICINA",
-                    "LOCA",
-                    "LOCALIDA PAGO",
-                    "CODIGO JEFE",
-                    "JEFE INMEDIATO",
-                    "EMAIL",
-                    "TELEFONO",
-                    "FECHA NACIMIENTO",
-                    "SEXO",
-                    "ENTIDAD DE SALUD",
-                    "FONDO DE PENSIONES",
-                    "FONDO DE CESANTIAS",
-                    "CAJA DE COMPENSACIÓN FAMILIAR"
-                ],
-                "Ingresos Jun 2026": [
-                    "CEDULA",
-                    "CUENTA CLIENTE",
-                    "COLABORADOR",
-                    "COD CARGO",
-                    "COD GRADO",
-                    "CARGO",
-                    "FECHA INGRESO",
-                    "FECHA FIN CONTRATO",
-                    "VICEPRESIDENCIA",
-                    "GERENCIA",
-                    "AREA",
-                    "ESTADO",
-                    "TIPO NOMINA",
-                    "CENTRO DE COSTOS",
-                    "LOCALIDAD",
-                    "COD OFIC",
-                    "OFICINA",
-                    "LOCA",
-                    "LOCALIDA PAGO",
-                    "CODIGO JEFE",
-                    "JEFE INMEDIATO",
-                    "EMAIL",
-                    "TELEFONO",
-                    "FECHA NACIMIENTO",
-                    "SEXO",
-                    "ENTIDAD DE SALUD",
-                    "FONDO DE PENSIONES",
-                    "FONDO DE CESANTIAS",
-                    "CAJA DE COMPENSACIÓN FAMILIAR"
-                ],
-                "Retiros Jun 2026": [
-                    "CEDULA",
-                    "CUENTA CLIENTE",
-                    "COLABORADOR",
-                    "COD CARGO",
-                    "COD GRADO",
-                    "CARGO",
-                    "FECHA INGRESO",
-                    "FECHA RETIRO",
-                    "VICEPRESIDENCIA",
-                    "GERENCIA",
-                    "AREA",
-                    "ESTADO",
-                    "TIPO NOMINA",
-                    "CENTRO DE COSTOS",
-                    "LOCALIDAD",
-                    "COD OFC",
-                    "OFICINA",
-                    "LOCA",
-                    "LOCALIDAD PAGO",
-                    "CODIGO JEFE",
-                    "JEFE INMEDIATO",
-                    "EMAIL",
-                    "TELEFONO",
-                    "FECHA NACIMIENTO",
-                    "SEXO",
-                    "ENTIDAD DE SALUD",
-                    "FONDO DE PENSIONES",
-                    "FONDO DE CESANTÍAS",
-                    "CAJAS DE COMPENSACIÓN"
-                ]
-            }
-        },
-        "Base Seguros – Actualizada": {
-            "hojas": {
-                "BANCO": [
-                    "CEDULA",
-                    "USUARIO WINDOWS",
-                    "INICIALES",
-                    "COLABORADOR",
-                    "CARGO"
-                ]
-            }
-        },
-        "Soy Prevenido": {
-            "hojas": {
-                "Ventas": [
-                    "CODIGO_AGENCIA",
-                    "NOMBRE_AGENCIA",
-                    "NOMBRE_ASEGURADO",
-                    "NUMERO_IDENTIFICACION",
-                    "CUENTA_CLIENTE",
-                    "TRANSACCION2",
-                    "VALOR_PRIMA",
-                    "FECHA_TRANSACCION",
-                    "COD_CAJERO",
-                    "NOMBRE_CAJERO"
-                ]
-            },
-            "nota": "Estas son las 10 columnas requeridas para el mapeo. El archivo real puede tener columnas adicionales que se preservan sin tocar."
-        }
-    },
-    "tabla_primas": [
-        {"prima": 2414, "cajero": 137, "subgerente": 34},
-        {"prima": 5072, "cajero": 290, "subgerente": 72},
-        {"prima": 6644, "cajero": 378, "subgerente": 95},
-        {"prima": 11597, "cajero": 658, "subgerente": 164}
+  "_meta": {
+    "descripcion": "Estructura esperada de los archivos Excel de entrada para el Panel de Automatización.",
+    "nota": "Aqui NO se pone el nombre fisico del archivo. Por ejemplo: Agosto.xlsx / Septiembre.xlsx / Octubre.xlsx. Todos pueden ser validos. Lo que se valida es la estructura interna del Excel.",
+    "version": "1.2",
+    "ciclo": "Jun 2026",
+    "cambios_v1_1": [
+      "Agregado insumo 'Soy Prevenido' con estructura de Ventas (10 columnas del mapeo oficial)",
+      "Corregido 'Base Seguros - Actualizada': ahora tiene pestaña BANCO con 5 columnas (no Registros)",
+      "Nueva sección 'tabla_primas' (config-driven, 4 valores hardcoded)",
+      "Nueva sección 'filtros_cargo' (constantes para filtros)"
     ],
-    "filtros_cargo": {
-        "subgerente_oficina": "SUBGERENTE DE OFICINA",
-        "red_agencias": [
-            "CAJERO(A) AUXILIAR",
-            "CAJERO(A) PRINCIPAL",
-            "SUBGERENTE DE OFICINA",
-            "AUXILIAR OPERATIVO",
-            "AUXILIAR OPERATIVO DE PLANTA",
-            "CAJERO(A) PRINCIPAL  DE PLANTA"
+    "cambios_v1_2": [
+      "Agregado AUXILIAR INTEGRAL al filtro de Base red agencias"
+    ]
+  },
+  "estructuras_requeridas": {
+    "Directorio Nacional": {
+      "hojas": {
+        "DIRECTORIO ACT": [
+          "OFICINA",
+          "COD",
+          "R",
+          "Z",
+          "COORD RED ASIGNADO",
+          "SUBGERENTE",
+          "SUBGERENTE REEMPLAZO",
+          "AUXILIAR OPERATIVO DE OFICINA",
+          "OFICINA CUENTA CON CAN",
+          "MUNICIPIO DE UBICACION CAN",
+          "SUBGERENTE COMERCIAL DE EXPANSION  ( CAN)",
+          "GERENTE DE OFICINA",
+          "GERENTE DE ZONA",
+          "GERENTE REGIONAL"
         ]
+      }
+    },
+    "Formato novedades subgerente oficina para seguros": {
+      "fila_encabezado": 3,
+      "hojas": {
+        "Hoja1": [
+          "CEDULA",
+          "NOMBRE",
+          "CARGO",
+          "CODIGO OFICINA",
+          "OFICINA",
+          "USUARIO (Iniciales de 3 letras)",
+          "INICIO (DD/MM/AAAA)",
+          "FIN (DD/MM/AAAA)",
+          "DIAS",
+          "CEDULA",
+          "NOMBRE",
+          "CARGO",
+          "CODIGO OFICINA",
+          "OFICINA",
+          "MOTIVO DE REEMPLAZO",
+          "USUARIO (Iniciales de 3 letras)"
+        ]
+      }
+    },
+    "Base Temporal Completa SS": {
+      "hojas": {
+        "Activos Jun 2026": [
+          "CEDULA",
+          "COLABORADOR",
+          "CARGO",
+          "FECHA INGRESO",
+          "VICEPRESIDENCIA",
+          "REGIONAL",
+          "ZONA",
+          "CENTRO DE COSTOS",
+          "COD OFIC",
+          "OFICINA",
+          "LOCA",
+          "LOCALIDAD PAGO",
+          "TELEFONO",
+          "EMAIL",
+          "FECHA NACIMIENTO",
+          "SEXO",
+          "ENTIDAD DE SALUD",
+          "FONDO DE PENSIONES",
+          "CAJA DE COMPENSACIÓN"
+        ],
+        "Ingresos Jun": [
+          "CEDULA",
+          "COLABORADOR",
+          "CARGO",
+          "FECHA INGRESO",
+          "VICEPRESIDENCIA",
+          "REGIONAL",
+          "ZONA",
+          "CENTRO DE COSTOS",
+          "COD OFIC",
+          "OFICINA",
+          "LOCA",
+          "LOCALIDAD PAGO",
+          "TELEFONO",
+          "EMAIL",
+          "FECHA NACIMIENTO",
+          "SEXO",
+          "ENTIDAD DE SALUD",
+          "FONDO DE PENSIONES",
+          "CAJA DE COMPENSACION"
+        ],
+        "Retirados Jun": [
+          "CEDULA",
+          "COLABORADOR",
+          "CARGO",
+          "FECHA INGRESO",
+          "VICEPRESIDENCIA",
+          "REGIONAL",
+          "ZONA",
+          "CENTRO DE COSTO",
+          "COD OFIC",
+          "OFICINA",
+          "LOCA",
+          "LOCALIDAD PAGO",
+          "TELEFONO",
+          "EMAIL",
+          "FECHA NACIMIENTO",
+          "SEXO",
+          "ENTIDAD DE SALUD",
+          "FONDO DE PENSIONES",
+          "CAJA DE COMPENSACION"
+        ]
+      }
+    },
+    "Base Banco Completa SS": {
+      "hojas": {
+        "Base Banco Activos al 31 Jun": [
+          "CEDULA",
+          "CUENTA CLIENTE",
+          "COLABORADOR",
+          "COD CARGO",
+          "COD GRADO",
+          "CARGO",
+          "FECHA INGRESO",
+          "FECHA FIN CONTRATO",
+          "VICEPRESIDENCIA",
+          "GERENCIA",
+          "AREA",
+          "ESTADO",
+          "TIPO NOMINA",
+          "CENTRO DE COSTOS",
+          "LOCALIDAD",
+          "COD OFIC",
+          "OFICINA",
+          "LOCA",
+          "LOCALIDA PAGO",
+          "CODIGO JEFE",
+          "JEFE INMEDIATO",
+          "EMAIL",
+          "TELEFONO",
+          "FECHA NACIMIENTO",
+          "SEXO",
+          "ENTIDAD DE SALUD",
+          "FONDO DE PENSIONES",
+          "FONDO DE CESANTIAS",
+          "CAJA DE COMPENSACIÓN FAMILIAR"
+        ],
+        "Ingresos Jun 2026": [
+          "CEDULA",
+          "CUENTA CLIENTE",
+          "COLABORADOR",
+          "COD CARGO",
+          "COD GRADO",
+          "CARGO",
+          "FECHA INGRESO",
+          "FECHA FIN CONTRATO",
+          "VICEPRESIDENCIA",
+          "GERENCIA",
+          "AREA",
+          "ESTADO",
+          "TIPO NOMINA",
+          "CENTRO DE COSTOS",
+          "LOCALIDAD",
+          "COD OFIC",
+          "OFICINA",
+          "LOCA",
+          "LOCALIDA PAGO",
+          "CODIGO JEFE",
+          "JEFE INMEDIATO",
+          "EMAIL",
+          "TELEFONO",
+          "FECHA NACIMIENTO",
+          "SEXO",
+          "ENTIDAD DE SALUD",
+          "FONDO DE PENSIONES",
+          "FONDO DE CESANTIAS",
+          "CAJA DE COMPENSACIÓN FAMILIAR"
+        ],
+        "Retiros Jun 2026": [
+          "CEDULA",
+          "CUENTA CLIENTE",
+          "COLABORADOR",
+          "COD CARGO",
+          "COD GRADO",
+          "CARGO",
+          "FECHA INGRESO",
+          "FECHA RETIRO",
+          "VICEPRESIDENCIA",
+          "GERENCIA",
+          "AREA",
+          "ESTADO",
+          "TIPO NOMINA",
+          "CENTRO DE COSTOS",
+          "LOCALIDAD",
+          "COD OFC",
+          "OFICINA",
+          "LOCA",
+          "LOCALIDAD PAGO",
+          "CODIGO JEFE",
+          "JEFE INMEDIATO",
+          "EMAIL",
+          "TELEFONO",
+          "FECHA NACIMIENTO",
+          "SEXO",
+          "ENTIDAD DE SALUD",
+          "FONDO DE PENSIONES",
+          "FONDO DE CESANTÍAS",
+          "CAJAS DE COMPENSACIÓN"
+        ]
+      }
+    },
+    "Base Seguros – Actualizada": {
+      "hojas": {
+        "BANCO": [
+          "CEDULA",
+          "USUARIO WINDOWS",
+          "INICIALES",
+          "COLABORADOR",
+          "CARGO"
+        ]
+      }
+    },
+    "Soy Prevenido": {
+      "hoja_patron": "Soy Prevenido \\d{2}_\\d{4}",
+      "fila_encabezado": 1,
+      "columnas": [
+        "CODIGO_AGENCIA",
+        "NOMBRE_AGENCIA",
+        "NOMBRE_ASEGURADO",
+        "NUMERO_IDENTIFICACION",
+        "CUENTA_CLIENTE",
+        "TRANSACCION2",
+        "VALOR_PRIMA",
+        "FECHA_TRANSACCION",
+        "COD_CAJERO",
+        "NOMBRE_CAJERO"
+      ],
+      "nota": "El archivo del operador tiene una pestaña con nombre dinámico 'Soy Prevenido MM_YYYY' (ej: 'Soy Prevenido 06_2026'). Usamos regex para matchearla. NO confundir con la plantilla de salida 'Base incentivos - Soy Prevenido.xlsx' que tiene pestaña 'Ventas'."
     }
+  },
+  "tabla_primas": [
+    {
+      "prima": 2414,
+      "cajero": 137,
+      "subgerente": 34
+    },
+    {
+      "prima": 5072,
+      "cajero": 290,
+      "subgerente": 72
+    },
+    {
+      "prima": 6644,
+      "cajero": 378,
+      "subgerente": 95
+    },
+    {
+      "prima": 11597,
+      "cajero": 658,
+      "subgerente": 164
+    }
+  ],
+  "filtros_cargo": {
+    "subgerente_oficina": "SUBGERENTE DE OFICINA",
+    "red_agencias": [
+      "CAJERO(A) AUXILIAR",
+      "CAJERO(A) PRINCIPAL",
+      "SUBGERENTE DE OFICINA",
+      "AUXILIAR OPERATIVO",
+      "AUXILIAR OPERATIVO DE PLANTA",
+      "CAJERO(A) PRINCIPAL  DE PLANTA",
+      "AUXILIAR INTEGRAL"
+    ]
+  }
 }

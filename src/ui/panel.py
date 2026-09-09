@@ -27,6 +27,7 @@ from src.ui.constants import (
     RUTA_SALIDA,
 )
 from src.ui.tabs import TabArchivos, TabControl, TabLogs
+from src.ui.widgets import ProgressDialog
 
 
 class Panel:
@@ -129,7 +130,7 @@ class Panel:
         self.logger.error(mensaje)
 
     def _on_iniciar_click(self) -> None:
-        """Handler del botón INICIAR: ejecuta ProcesarCiclo."""
+        """Handler del botón INICIAR: ejecuta ProcesarCiclo con barra de progreso."""
         if self.bot_ejecutando:
             return
         insumos = self.tab_archivos.obtener_insumos()
@@ -139,7 +140,16 @@ class Panel:
 
         self.bot_ejecutando = True
         self.tab_archivos.set_estado_bot_ejecutando(True)
+        # Reset: ocultar archivos de salida previos antes de empezar.
+        self.tab_archivos.ocultar_archivos_salida()
         self._log("Iniciando procesamiento del ciclo...")
+
+        # Crear diálogo de progreso modal.
+        progress_dialog = ProgressDialog(self.app)
+
+        def progress_cb(percent: int, mensaje: str) -> None:
+            """Callback invocado por ProcesarCiclo en cada paso."""
+            progress_dialog.update_progress(percent, mensaje)
 
         try:
             procesar = ProcesarCiclo(
@@ -149,7 +159,7 @@ class Panel:
                 ruta_plantilla=RUTA_PLANTILLA,
                 directorio_salida=RUTA_SALIDA,
             )
-            resultado = procesar.ejecutar()
+            resultado = procesar.ejecutar(progress_callback=progress_cb)
 
             if resultado.exito and resultado.ruta_salida:
                 self._log(f"Archivo generado: {resultado.ruta_salida.name}")
@@ -160,6 +170,8 @@ class Panel:
                 self._log(
                     f"  Base red agencias: {resultado.filas_base_red_agencias} filas"
                 )
+                # Mostrar la sección de salida con el archivo generado.
+                self.tab_archivos.mostrar_archivos_salida([resultado.ruta_salida])
             else:
                 for e in resultado.errores:
                     self._log(e, "ERROR")
@@ -168,6 +180,8 @@ class Panel:
             self._log(f"Error durante el procesamiento: {e}", "ERROR")
             self._error(str(e))
         finally:
+            # Cerrar diálogo de progreso y resetear estado del bot.
+            progress_dialog.cerrar()
             self.bot_ejecutando = False
             self.tab_archivos.set_estado_bot_ejecutando(False)
 
