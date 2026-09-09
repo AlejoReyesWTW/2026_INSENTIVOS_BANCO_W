@@ -50,6 +50,7 @@ class BloqueArchivo(ctk.CTkFrame):
         self.tipo = tipo
         self._on_change = on_change
         self._ruta: Path | None = None
+        self._validado: bool = False  # True solo si pasó la validación de estructura
 
         self._crear_widgets()
 
@@ -112,6 +113,7 @@ class BloqueArchivo(ctk.CTkFrame):
     def set_ruta(self, ruta: Path) -> None:
         """Setea la ruta y muestra el nombre del archivo en la etiqueta."""
         self._ruta = ruta
+        self._validado = False  # Reset: nuevo archivo, debe re-validarse
         self.label_info.configure(
             text=f"📄 {ruta.name}",
             text_color=COLOR_INPUT_TEXT,
@@ -124,8 +126,13 @@ class BloqueArchivo(ctk.CTkFrame):
         """Retorna la ruta seleccionada o None si no hay archivo."""
         return self._ruta
 
+    def is_validado(self) -> bool:
+        """Retorna True solo si el archivo pasó la validación de estructura."""
+        return self._validado
+
     def set_estado_validando(self) -> None:
         """Marca el bloque como 'Validando...': botón deshabilitado + texto 'Validando...'."""
+        self._validado = False
         self._set_estado("● Validando...", "#F59E0B")
         self.btn_buscar.configure(
             state="disabled",
@@ -142,6 +149,7 @@ class BloqueArchivo(ctk.CTkFrame):
 
     def set_estado_valido(self) -> None:
         """Marca el bloque como válido: ✓ verde + 'Analizado y aprobado'."""
+        self._validado = True  # ← clave para habilitar el botón INICIAR
         self._set_estado("✓ Archivo válido", COLOR_OK)
         # Restaurar botón Buscar.
         self.btn_buscar.configure(
@@ -159,6 +167,7 @@ class BloqueArchivo(ctk.CTkFrame):
 
     def set_estado_invalido(self, errores: list[str]) -> None:
         """Marca el bloque como inválido: ✗ rojo con la lista de errores."""
+        self._validado = False
         self._set_estado("✗ Archivo inválido", COLOR_ERROR)
         # Restaurar botón Buscar (puede reintentar con otro archivo).
         self.btn_buscar.configure(

@@ -7,7 +7,9 @@ from pathlib import Path
 # Colores del tema WTW.
 COLOR_WTW = "#FF6900"
 COLOR_WTW_HOVER = "#00A3AD"
+COLOR_WTW_SECONDARY = "#9ca3af"  # Gris para estados deshabilitados / secundarios
 COLOR_FONDO = "#ffffff"
+COLOR_WHITE = "#ffffff"  # Blanco puro (alias de FONDO)
 COLOR_PANEL = "#202027"
 COLOR_PANEL_2 = "#292931"
 COLOR_TEXTO = "#1F7797"
