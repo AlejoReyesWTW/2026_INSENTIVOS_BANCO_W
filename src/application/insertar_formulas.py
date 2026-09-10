@@ -1,22 +1,34 @@
-"""Caso de uso: insertar fórmulas en la pestaña Ventas del archivo de salida."""
+"""Caso de uso: escribir VALORES COMPUTADOS en J, L, M, N, O, P, Q, R, S de Ventas.
+
+Razon: openpyxl escribe formulas de una forma que Excel no parsea
+correctamente (causa corrupcion del archivo: "LIBRO REPARADO, Registros
+quitados: Formula"). Ademas BUSCARX no existe en Google Sheets (#NAME?).
+Solucion: calcular TODO en Python y escribir solo VALORES, no formulas.
+
+Columnas escritas:
+  J (10) = CEDULA (lookup en Base red agencias por USUARIO WINDOWS)
+  L (12) = CAJERO (137/290/378/658 segun VALOR_PRIMA)
+  M (13) = SUBGERENTE (34/72/95/164 segun VALOR_PRIMA)
+  N (14) = replica de A (CODIGO AGENCIA)
+  O (15) = replica de B (NOMBRE AGENCIA)
+  P (16) = CEDULA (lookup en Base subgerentes por COD_AGENCIA en col H)
+  Q (17) = NOMBRE (lookup en Base subgerentes por COD_AGENCIA en col H)
+  R (18) = replica de P
+  S (19) = replica de Q
+"""
 
 from __future__ import annotations
-from typing import Any
 
-from src.domain.formulas import formula_buscarx, formula_replica
-from src.domain.tabla_primas import TablaPrimas
-from src.infrastructure.excel_reader import ExcelReader
-from src.infrastructure.excel_writer import ExcelWriter
-
-_COL_J = 10
-_COL_L = 12
-_COL_M = 13
-_COL_N = 14
-_COL_O = 15
-_COL_P = 16
-_COL_Q = 17
-_COL_R = 18
-_COL_S = 19
+# Constantes de columnas (1-based).
+_COL_J = 10  # CC_CAJERO
+_COL_L = 12  # CAJERO
+_COL_M = 13  # SUBGERENTE
+_COL_N = 14  # COD (replica de A)
+_COL_O = 15  # AGENCIA2 (replica de B)
+_COL_P = 16  # CC_SUBGERENTE
+_COL_Q = 17  # NOMBRE_SUBGERENTE
+_COL_R = 18  # replica de P
+_COL_S = 19  # replica de Q
 
 
 def _diagnosticar_lookups(writer, logger, fila_inicio, fila_fin):
@@ -111,7 +123,8 @@ def _leer_indices_lookups(writer):
             cedula = ws_bs.cell(row=fila, column=1).value
             nombre = ws_bs.cell(row=fila, column=2).value
             if cod is not None and (cedula is not None or nombre is not None):
-                cod_int = int(cod) if str(cod).isdigit() else cod
+                s = str(cod).strip()
+                cod_int = int(s) if s.isdigit() else cod
                 empleados_bs[cod_int] = (cedula, nombre)
     return usuarios_ra, empleados_bs
 
@@ -119,14 +132,21 @@ def _leer_indices_lookups(writer):
 def insertar_formulas_ventas(
     writer, tabla_primas, fila_inicio=2, fila_fin=31362, col_prima="G", logger=None,
 ):
-    """Inserta formulas y valores computados en J, L, M, N, O, P, Q, R, S."""
+    """Escribe VALORES COMPUTADOS en J, L, M, N, O, P, Q, R, S de Ventas.
+
+    NO escribe formulas para evitar:
+    1. Corrupcion del archivo Excel (openpyxl escribe formulas mal)
+    2. Error #NAME? en Google Sheets (BUSCARX no existe ahi)
+
+    Los valores se calculan en Python y se escriben directamente.
+    """
     total_filas = fila_fin - fila_inicio + 1
 
     def _log(msg):
         if logger is not None:
             logger.info(f"[insertar_formulas_ventas] {msg}")
 
-    _log(f"Iniciando insercion en filas {fila_inicio}-{fila_fin} ({total_filas} filas)")
+    _log(f"Escribiendo valores en filas {fila_inicio}-{fila_fin} ({total_filas} filas)")
 
     if logger is not None:
         _diagnosticar_lookups(writer, logger, fila_inicio, fila_fin)
@@ -147,11 +167,12 @@ def insertar_formulas_ventas(
         a_val = ws.cell(row=fila, column=1).value
         b_val = ws.cell(row=fila, column=2).value
 
-        # J: BUSCARX(I, Base red agencias!A:A, Base red agencias!C:C, 1, 0)
+        # J (10): CEDULA = lookup en Base red agencias por USUARIO WINDOWS
         if i_val is not None and isinstance(i_val, str):
             usuario_buscado = i_val.strip()
             j_valor = usuarios_ra.get(usuario_buscado)
             if j_valor is None:
+                # Intentar sin distinguir mayusculas/minusculas
                 usuario_lower = usuario_buscado.lower()
                 for u, c in usuarios_ra.items():
                     if u.lower() == usuario_lower:
@@ -159,56 +180,73 @@ def insertar_formulas_ventas(
                         break
         else:
             j_valor = None
-        ws.cell(row=fila, column=_COL_J).value = formula_buscarx(
-            valor_ref=f"I{fila}",
-            hoja_destino="Base red agencias",
-            col_busqueda="A",
-            col_retorno="C",
-        )
+        ws.cell(row=fila, column=_COL_J).value = j_valor
 
-        # L: SI anidada sobre G (VALOR_PRIMA) para CAJERO
-        ws.cell(row=fila, column=_COL_L).value = tabla_primas.formula_cajero(col_prima, fila)
+        # L (12): CAJERO segun VALOR_PRIMA (137/290/378/658)
+        l_valor = _calcular_cajero(g_val=ws.cell(row=fila, column=7).value)
+        ws.cell(row=fila, column=_COL_L).value = l_valor
 
-        # M: SI anidada sobre G (VALOR_PRIMA) para SUBGERENTE
-        ws.cell(row=fila, column=_COL_M).value = tabla_primas.formula_subgerente(col_prima, fila)
+        # M (13): SUBGERENTE segun VALOR_PRIMA (34/72/95/164)
+        m_valor = _calcular_subgerente(g_val=ws.cell(row=fila, column=7).value)
+        ws.cell(row=fila, column=_COL_M).value = m_valor
 
-        # N: replica de A
-        ws.cell(row=fila, column=_COL_N).value = formula_replica(f"A{fila}")
+        # N (14): replica de A (CODIGO AGENCIA)
+        ws.cell(row=fila, column=_COL_N).value = a_val
 
-        # O: replica de B
-        ws.cell(row=fila, column=_COL_O).value = formula_replica(f"B{fila}")
+        # O (15): replica de B (NOMBRE AGENCIA)
+        ws.cell(row=fila, column=_COL_O).value = b_val
 
-        # P: BUSCARX(N, Base subgerentes!H:H, Base subgerentes!A:A, 1, 0)
+        # P (16): CEDULA = lookup en Base subgerentes por COD_AGENCIA
         if a_val is not None:
-            cod_int = int(a_val) if str(a_val).isdigit() else a_val
+            try:
+                cod_int = int(a_val)
+            except (TypeError, ValueError):
+                cod_int = a_val
             p_valor = empleados_bs.get(cod_int, (None, None))[0]
         else:
             p_valor = None
-        ws.cell(row=fila, column=_COL_P).value = formula_buscarx(
-            valor_ref=f"N{fila}",
-            hoja_destino="Base subgerentes",
-            col_busqueda="H",
-            col_retorno="A",
-        )
+        ws.cell(row=fila, column=_COL_P).value = p_valor
 
-        # Q: BUSCARX(N, Base subgerentes!H:H, Base subgerentes!B:B, 1, 0)
+        # Q (17): NOMBRE = lookup en Base subgerentes por COD_AGENCIA
         if a_val is not None:
-            cod_int = int(a_val) if str(a_val).isdigit() else a_val
+            try:
+                cod_int = int(a_val)
+            except (TypeError, ValueError):
+                cod_int = a_val
             q_valor = empleados_bs.get(cod_int, (None, None))[1]
         else:
             q_valor = None
-        ws.cell(row=fila, column=_COL_Q).value = formula_buscarx(
-            valor_ref=f"N{fila}",
-            hoja_destino="Base subgerentes",
-            col_busqueda="H",
-            col_retorno="B",
-        )
+        ws.cell(row=fila, column=_COL_Q).value = q_valor
 
-        # R: replica de P
-        ws.cell(row=fila, column=_COL_R).value = formula_replica(f"P{fila}")
+        # R (18): replica de P
+        ws.cell(row=fila, column=_COL_R).value = p_valor
 
-        # S: replica de Q
-        ws.cell(row=fila, column=_COL_S).value = formula_replica(f"Q{fila}")
+        # S (19): replica de Q
+        ws.cell(row=fila, column=_COL_S).value = q_valor
 
-    _log(f"Formulas y valores insertados en {total_filas} filas")
-    _log(f"Total: 9 columnas (J, L, M, N, O, P, Q, R, S)")
+    _log(f"Valores escritos en {total_filas} filas")
+    _log("Total: 9 columnas (J, L, M, N, O, P, Q, R, S) con valores computados")
+
+
+def _calcular_cajero(g_val):
+    """Calcula el incentivo de cajero segun VALOR_PRIMA."""
+    if g_val is None:
+        return None
+    try:
+        g = int(g_val)
+    except (TypeError, ValueError):
+        return None
+    tabla = {2414: 137, 5072: 290, 6644: 378, 11597: 658}
+    return tabla.get(g, 0)
+
+
+def _calcular_subgerente(g_val):
+    """Calcula el incentivo de subgerente segun VALOR_PRIMA."""
+    if g_val is None:
+        return None
+    try:
+        g = int(g_val)
+    except (TypeError, ValueError):
+        return None
+    tabla = {2414: 34, 5072: 72, 6644: 95, 11597: 164}
+    return tabla.get(g, 0)
