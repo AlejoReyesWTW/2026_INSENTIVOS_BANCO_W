@@ -284,5 +284,11 @@
       "CAJERO(A) PRINCIPAL  DE PLANTA",
       "AUXILIAR INTEGRAL"
     ]
+  },
+  "tabla_comisiones": {
+    "path": "Bases/Base_Comisiones_Insentivos.xlsx"
+  },
+  "correcciones_nombres": {
+    "path": "Bases/Correccion_nombres_base_subgerentes.xlsx"
   }
 }

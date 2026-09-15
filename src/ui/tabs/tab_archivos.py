@@ -60,25 +60,33 @@ class TabArchivos:
     def _crear_secciones(self) -> None:
         """Crea las 2 secciones colapsables + botón Iniciar.
 
-        Layout (usando pack con side="bottom"):
-          [▼ Archivos de entrada]   ← toma el espacio restante (expande)
-          [Estado + Botón INICIAR]   ← fijo, al medio
-          [▼ Archivos de salida]     ← fijo, al fondo (oculto inicialmente)
+        Layout (pack secuencial dentro de un scroll global):
+          [Scroll global del tab]
+            [▼ Archivos de entrada]
+            [Estado + Botón INICIAR]
+            [▼ Archivos de salida]  ← visible cuando mostrar_salida=True
+
+        El scroll global permite bajar y ver las cards de salida sin
+        colapsar la sección de entrada.
         """
+        # Scroll global del tab: permite bajar y ver todo el contenido.
+        self.scroll_global = ctk.CTkScrollableFrame(self.frame, fg_color="transparent")
+        self.scroll_global.pack(fill="both", expand=True)
+
         # Crear las secciones y widgets primero (sin empacar).
         self.seccion_entrada = SeccionColapsable(
-            self.frame,
+            self.scroll_global,
             titulo="📁 Archivos de entrada",
             expandido=True,
         )
         self.seccion_salida = SeccionColapsable(
-            self.frame,
+            self.scroll_global,
             titulo="📤 Archivos de salida",
             expandido=False,
         )
 
         # Botón Iniciar + estado.
-        frame_iniciar = ctk.CTkFrame(self.frame, fg_color="transparent")
+        frame_iniciar = ctk.CTkFrame(self.scroll_global, fg_color="transparent")
         self.estado_general = ctk.CTkLabel(
             frame_iniciar,
             text="● Esperando archivos válidos",
@@ -100,14 +108,14 @@ class TabArchivos:
         )
         self.btn_iniciar.pack(pady=(0, 10))
 
-        # Empacar en orden: primero los del fondo (fixed), después los que expanden.
-        # 1. Iniciar (al medio, fijo).
-        frame_iniciar.pack(side="bottom", fill="x", padx=15, pady=5)
-        # 2. Salida (al fondo, fijo, oculto hasta mostrar_archivos_salida).
-        # NO se empaca aquí — se hace en mostrar_archivos_salida().
-        # 3. Entrada (arriba, expande para llenar el espacio restante).
-        self.seccion_entrada.pack(fill="both", expand=True, padx=15, pady=(15, 5))
+        # Empacar en orden (todos top, dentro del scroll).
+        # 1. Entrada (arriba).
+        self.seccion_entrada.pack(fill="x", padx=15, pady=(15, 5))
         self._poblar_seccion_entrada(self.seccion_entrada.contenido)
+        # 2. Iniciar (al medio).
+        frame_iniciar.pack(fill="x", padx=15, pady=5)
+        # 3. Salida: NO se empaca aquí. Solo se muestra cuando
+        #    mostrar_archivos_salida() lo pide (tras generar archivos).
         self._poblar_seccion_salida(self.seccion_salida.contenido)
 
     def _poblar_seccion_entrada(self, parent: ctk.CTk) -> None:
@@ -121,9 +129,10 @@ class TabArchivos:
             anchor="w",
         ).pack(fill="x", padx=10, pady=(5, 10))
 
-        # Scroll que se expande para llenar el espacio vertical disponible.
+        # Scroll que se expande moderado para llenar el espacio vertical
+        # disponible dentro de la sección (sin expand infinito).
         scroll = ctk.CTkScrollableFrame(parent, fg_color="transparent")
-        scroll.pack(fill="both", expand=True, padx=5, pady=5)
+        scroll.pack(fill="both", expand=True, padx=5, pady=5, ipady=4)
 
         for tipo in self.tipos:
             bloque = BloqueArchivo(scroll, tipo=tipo, on_change=self._on_bloque_change)
@@ -193,8 +202,23 @@ class TabArchivos:
             if i < len(cards):
                 cards[i].set_ruta(ruta)
 
-        # Mostrar la sección al fondo (después del botón Iniciar).
-        self.seccion_salida.pack(side="bottom", fill="x", padx=15, pady=(5, 15))
+        # Empacar la sección de salida (si ya estaba empacada, no se
+        # vuelve a empaquetar para evitar error de doble pack).
+        if not self.mostrar_salida or self.seccion_salida.winfo_manager() != "pack":
+            self.seccion_salida.pack(fill="x", padx=15, pady=(5, 15))
+        # Expandir para que las cards queden visibles.
+        self.seccion_salida.expandir()
+        # Mover el scroll al final para que las cards queden visibles sin
+        # necesidad de colapsar la sección de entrada.
+        self.scroll_global.after(100, self._scroll_al_final)
+
+    def _scroll_al_final(self) -> None:
+        """Mueve el scroll global hacia abajo (ver las cards de salida)."""
+        try:
+            canvas = self.scroll_global._parent_canvas
+            canvas.yview_moveto(1.0)
+        except (AttributeError, KeyError, ValueError):
+            self._on_log("No se pudo mover el scroll al final.", "WARNING")
 
     def ocultar_archivos_salida(self) -> None:
         """Oculta la sección de salida."""

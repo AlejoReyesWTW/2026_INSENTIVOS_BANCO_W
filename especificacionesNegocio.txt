@@ -65,6 +65,17 @@ hay 2 procesos muy grandes los cuales corresponden a cada archivo, el archivo Ba
 	R = P
 	S = Q
 
+	necesito tambien dividirlo en procesos sencillos , pero la idea es que una vez se haya llenado las columna P y Q entonces inmediatamente se filtra por la columna P y va seleccionar las vacias,una vez
+   filtrado seleccionamos todos los codigos que estan en la columna  N "COD"  y sacaremos una lista filtrada porque esos codigos se repiten entonces la idea es sacar una lista con un unico codigo , un
+   listado de unicos codigos, luego de ello,tenemos que ir a directorio nacional.xls, el insumo de entrada que nos dieron, con esa lista armada de codios vamos armar un filtrado en directorio nacional por la
+   columna B y quiero que me muestre o me filtre los datos  y copiaras la columna codigo "COD" columna B y la columna F llamada SUBGERENTE, ese es el uso que le daremos a ese archivo  para luego copiar esa
+   informacion de esos codigos, y pegarlo en la pestaña de base subgerentes, debajo de la ultima fila que se inserto data en subgerentes, obviamente.  la idea es que la columna B y F de directorio nacional
+   se ubiquen de esta forma
+
+
+
+
+   
 asi quedaria la columna izquierda es el archivo que estaremos armando, y la derecha es del otro archivo o pestañas de donde copiaremos la informacion 
 	
 

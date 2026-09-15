@@ -10,13 +10,13 @@ columnas esperadas en cada hoja del archivo.
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
 from src.domain.mapeo import normalizar_header
 from src.infrastructure.excel_reader import ExcelReader
-from src.infrastructure.excel_writer import ExcelWriter  # noqa: I001
+from src.infrastructure.excel_writer import ExcelWriter
 
 
 # Mapeo de columnas: clave = nombre normalizado de la columna en el insumo,
@@ -71,6 +71,30 @@ def _limpiar_cod_cajero(valor: Any) -> Any:
     if "@" not in valor:
         return valor
     return valor.split("@", 1)[0]
+
+
+def _clave_orden_fecha(fila: list) -> tuple:
+    """Clave de orden para la columna F (índice 5 en la lista de la fila).
+
+    Devuelve una tupla comparable para ordenar de más antigua a más
+    reciente. Las fechas que no se pueden parsear (None, texto inválido)
+    quedan al final (segundo elemento 1 + algo grande).
+    """
+    valor = fila[5] if len(fila) > 5 else None
+    if isinstance(valor, datetime):
+        return (0, valor.date())
+    if isinstance(valor, date):
+        return (0, valor)
+    if isinstance(valor, str):
+        texto = valor.strip()
+        # Formato ISO (yyyy-mm-dd) y dd/mm/yyyy.
+        for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d"):
+            try:
+                return (0, datetime.strptime(texto, fmt).date())
+            except ValueError:
+                continue
+        return (1, 0)  # texto no parseable → al final
+    return (1, 0)  # None u otro → al final
 
 
 def _detectar_hoja_y_fila(reader: ExcelReader) -> tuple[str, int] | None:
@@ -160,6 +184,10 @@ def llenar_ventas(ruta_insumo: Path | str, writer: ExcelWriter) -> int:
 
                 fila_out[col_destino - 1] = valor
             filas_para_escribir.append(fila_out)
+
+        # 5b. Ordenar las filas por FECHA_TRANSACCION (col F, índice 5)
+        #     de más antigua a más reciente.
+        filas_para_escribir.sort(key=_clave_orden_fecha)
 
         # 6. Escribir en la pestaña Ventas (a partir de fila 2).
         if filas_para_escribir:
