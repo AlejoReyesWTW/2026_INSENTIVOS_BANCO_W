@@ -16,7 +16,7 @@ class SeccionColapsable(ctk.CTkFrame):
 
     def __init__(
         self,
-        parent: ctk.CTk,
+        parent: ctk.CTkFrame | ctk.CTk,
         titulo: str,
         expandido: bool = True,
     ) -> None:

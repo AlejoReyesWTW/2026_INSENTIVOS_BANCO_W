@@ -60,36 +60,36 @@ class ConfigLoader:
         return self._datos["estructuras_requeridas"]
 
     def cargar_tabla_primas(self) -> TablaPrimas:
-        """Devuelve la tabla de primas como TablaPrimas (tupla de Prima).
+        """Devuelve la tabla de primas desde el archivo Excel de comisiones.
 
-        Prioridad:
-          1. Archivo Base_Comisiones_Insentivos.xlsx (si está configurado
-             en `tabla_comisiones.path` y existe).
-          2. Sección `tabla_primas` del Configuracion.json (fallback).
+        ÚNICA fuente: `Base_Comisiones_Insentivos.xlsx` (ruta en
+        `tabla_comisiones.path`). No hay fallback a JSON: si el archivo
+        falta, no está configurado o no trae incentivos, se lanza un error
+        claro que debe aparecer en los logs del proceso.
 
-        Si el banco cambia la tabla en el xlsx, los cálculos se ajustan
-        automáticamente sin tocar código.
+        Raises:
+            ConfiguracionInvalidaError: si el Excel no existe, no está
+                configurado o no tiene filas de incentivos.
         """
         tabla_xlsx = self._cargar_tabla_primas_desde_xlsx()
         if tabla_xlsx is not None:
             return tabla_xlsx
 
-        primas_raw = self._datos.get("tabla_primas", [])
-        primas: list[Prima] = []
-        for idx, entry in enumerate(primas_raw):
-            try:
-                primas.append(
-                    Prima(
-                        valor=int(entry["prima"]),
-                        cajero=int(entry["cajero"]),
-                        subgerente=int(entry["subgerente"]),
-                    )
-                )
-            except (KeyError, TypeError, ValueError) as e:
-                raise ConfiguracionInvalidaError(
-                    f"Entrada inválida en tabla_primas[{idx}]: {e}"
-                ) from e
-        return TablaPrimas(tuple(primas))
+        path_rel = self._datos.get("tabla_comisiones", {}).get("path")
+        if not path_rel:
+            raise ConfiguracionInvalidaError(
+                "No hay tabla de comisiones: falta 'tabla_comisiones.path' "
+                "en Configuracion.json. Ubique el archivo "
+                "Base_Comisiones_Insentivos.xlsx en la raíz 'incentivos'."
+            )
+        ruta_xlsx = Path(path_rel)
+        if not ruta_xlsx.is_absolute():
+            ruta_xlsx = self.ruta.parent / ruta_xlsx
+        raise ConfiguracionInvalidaError(
+            f"No se encontró el archivo de comisiones {ruta_xlsx}. "
+            "Verifique que Base_Comisiones_Insentivos.xlsx esté en la raíz "
+            "'incentivos' junto al ejecutable."
+        )
 
     def _cargar_tabla_primas_desde_xlsx(self) -> TablaPrimas | None:
         """Lee la tabla desde el xlsx de comisiones si está disponible."""
@@ -106,7 +106,14 @@ class ConfigLoader:
                 leer_tabla_comisiones,
             )
 
-            return leer_tabla_comisiones(ruta_xlsx)
+            tabla = leer_tabla_comisiones(ruta_xlsx)
+            if not tabla.primas:
+                raise ConfiguracionInvalidaError(
+                    f"El archivo de comisiones {ruta_xlsx} no tiene "
+                    "incentivos (tabla vacía). Agregue las filas de primas "
+                    "desde la fila 3."
+                )
+            return tabla
         except (OSError, ValueError, KeyError) as e:
             raise ConfiguracionInvalidaError(
                 f"No se pudo leer la tabla de comisiones desde {ruta_xlsx}: {e}"

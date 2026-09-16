@@ -12,10 +12,12 @@ Une todos los pasos:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 
 from src.application.copiar_plantilla import copiar_plantilla_a_salida
 from src.application.detectar_ciclo import detectar_ciclo
+from src.application.generar_planilla_pago import generar_planilla_pago
 from src.application.insertar_formulas import insertar_formulas_ventas
 from src.application.llenar_base_red_agencias import llenar_base_red_agencias
 from src.application.llenar_base_subgerentes import llenar_base_subgerentes
@@ -31,6 +33,7 @@ from src.application.rellenar_pq_desde_directorio import (
 )
 from src.application.validar_insumos import ValidadorInsumos
 from src.domain.insumo import TipoInsumo
+from src.domain.mes_valido import validar_mes_insumos
 from src.infrastructure.config_loader import ConfigLoader
 from src.infrastructure.excel_writer import ExcelWriter
 from src.infrastructure.file_utils import generar_nombre_unico_si_existe
@@ -46,6 +49,7 @@ class ResultadoProceso:
     filas_ventas: int = 0
     filas_base_subgerentes: int = 0
     filas_base_red_agencias: int = 0
+    ruta_planilla_pago: Path | None = None
     errores: list[str] = field(default_factory=list)
 
 
@@ -103,6 +107,17 @@ class ProcesarCiclo:
 
         _avance(15, "✅ Validación OK: estructura de insumos correcta.")
 
+        # 1b. Validar coherencia de mes de los insumos contra el mes actual.
+        _avance(
+            16,
+            "🗓️ Validando coherencia de mes en los archivos de insumo...",
+        )
+        validacion_mes = validar_mes_insumos(list(self.insumos.values()))
+        if not validacion_mes.valido:
+            for e in validacion_mes.errores:
+                self.logger.error(e)
+            return ResultadoProceso(exito=False, errores=validacion_mes.errores)
+
         # 2. Detectar ciclo del nombre del SOY PREVENIDO.
         ruta_soy_prevenido = self.insumos[TipoInsumo.SOY_PREVENIDO]
         try:
@@ -114,6 +129,13 @@ class ProcesarCiclo:
                 errores=[f"No se pudo detectar el ciclo: {e}"],
             )
         _avance(20, f"🗓️ Ciclo detectado: {periodo}")
+
+        # 2b. Carpeta de salida por fecha: salidas/<año>/<mes>/<día>
+        #     (la operación la ve sin abrir la app).
+        directorio_fecha = (
+            self.directorio_salida / str(periodo.anio) / periodo.mes / _dia_actual()
+        )
+        self.directorio_salida = directorio_fecha
 
         # 3. Construir nombre del archivo de salida.
         nombre_archivo = (
@@ -218,12 +240,33 @@ class ProcesarCiclo:
         finally:
             writer.cerrar()
 
+        ruta_planilla = self.directorio_salida / (
+            f"planilla de pago {periodo.mes} {periodo.anio}.xlsx"
+        )
+        try:
+            ruta_planilla = generar_planilla_pago(ruta_destino, ruta_planilla)
+            self.logger.info(f"Planilla de pago generada: {ruta_planilla.name}")
+            _avance(99, "📄 Planilla de pago generada correctamente.")
+        except (OSError, KeyError, ValueError) as e:
+            mensaje = f"No se pudo generar la planilla de pago: {e}"
+            self.logger.error(mensaje)
+            return ResultadoProceso(
+                exito=False,
+                ruta_salida=ruta_destino,
+                ruta_planilla_pago=ruta_planilla,
+                filas_ventas=filas_ventas,
+                filas_base_subgerentes=filas_subgerentes,
+                filas_base_red_agencias=filas_red,
+                errores=[mensaje],
+            )
+
         _avance(100, f"🎉 Procesamiento completado: {ruta_destino.name}")
         self.logger.info(f"Procesamiento exitoso: {ruta_destino}")
 
         return ResultadoProceso(
             exito=True,
             ruta_salida=ruta_destino,
+            ruta_planilla_pago=ruta_planilla,
             filas_ventas=filas_ventas,
             filas_base_subgerentes=filas_subgerentes,
             filas_base_red_agencias=filas_red,
@@ -349,3 +392,8 @@ class ProcesarCiclo:
             )
             return None
         return ruta
+
+
+def _dia_actual() -> str:
+    """Devuelve el día actual como string (sin cero a la izquierda)."""
+    return str(date.today().day)
