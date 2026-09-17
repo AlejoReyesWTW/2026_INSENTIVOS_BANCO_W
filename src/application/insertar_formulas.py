@@ -61,7 +61,9 @@ def _diagnosticar_lookups(writer, logger, fila_inicio, fila_fin):
                 val = ws_ra.cell(row=fila, column=1).value
                 if val is not None and str(val).strip():
                     usuarios_ra.add(str(val).strip())
-            logger.info(f"[diagnostico] Base red agencias: {len(usuarios_ra)} usuarios unicos.")
+            logger.info(
+                f"[diagnostico] Base red agencias: {len(usuarios_ra)} usuarios unicos."
+            )
             matches_j = cod_cajeros & usuarios_ra
             no_match_j = cod_cajeros - usuarios_ra
             pct_j = len(matches_j) / len(cod_cajeros) * 100 if cod_cajeros else 0
@@ -69,11 +71,17 @@ def _diagnosticar_lookups(writer, logger, fila_inicio, fila_fin):
                 f"[diagnostico] BUSCARX J: {len(matches_j)}/{len(cod_cajeros)} matchean ({pct_j:.1f}%)."
             )
             if no_match_j:
-                logger.warning(f"[diagnostico] BUSCARX J: {len(no_match_j)} COD_CAJERO sin match.")
+                logger.warning(
+                    f"[diagnostico] BUSCARX J: {len(no_match_j)} COD_CAJERO sin match."
+                )
                 if len(no_match_j) <= 30:
-                    logger.warning(f"[diagnostico] BUSCARX J: lista no-matches: {sorted(no_match_j)}")
+                    logger.warning(
+                        f"[diagnostico] BUSCARX J: lista no-matches: {sorted(no_match_j)}"
+                    )
                 else:
-                    logger.warning(f"[diagnostico] BUSCARX J: muestra 30 no-matches: {sorted(no_match_j)[:30]}")
+                    logger.warning(
+                        f"[diagnostico] BUSCARX J: muestra 30 no-matches: {sorted(no_match_j)[:30]}"
+                    )
         else:
             logger.error("[diagnostico] Hoja Base red agencias NO EXISTE.")
         if "Base subgerentes" in wb.sheetnames:
@@ -85,7 +93,9 @@ def _diagnosticar_lookups(writer, logger, fila_inicio, fila_fin):
                     s_h = str(val).strip()
                     if s_h.isdigit():
                         cod_agencias_bs.add(int(s_h))
-            logger.info(f"[diagnostico] Base subgerentes: {len(cod_agencias_bs)} COD_AGENCIA unicos.")
+            logger.info(
+                f"[diagnostico] Base subgerentes: {len(cod_agencias_bs)} COD_AGENCIA unicos."
+            )
             matches_pq = cod_agencias & cod_agencias_bs
             no_match_pq = cod_agencias - cod_agencias_bs
             pct_pq = len(matches_pq) / len(cod_agencias) * 100 if cod_agencias else 0
@@ -93,11 +103,17 @@ def _diagnosticar_lookups(writer, logger, fila_inicio, fila_fin):
                 f"[diagnostico] BUSCARX P/Q: {len(matches_pq)}/{len(cod_agencias)} matchean ({pct_pq:.1f}%)."
             )
             if no_match_pq:
-                logger.warning(f"[diagnostico] BUSCARX P/Q: {len(no_match_pq)} CODIGO_AGENCIA sin match.")
+                logger.warning(
+                    f"[diagnostico] BUSCARX P/Q: {len(no_match_pq)} CODIGO_AGENCIA sin match."
+                )
                 if len(no_match_pq) <= 30:
-                    logger.warning(f"[diagnostico] BUSCARX P/Q: lista no-matches: {sorted(no_match_pq)}")
+                    logger.warning(
+                        f"[diagnostico] BUSCARX P/Q: lista no-matches: {sorted(no_match_pq)}"
+                    )
                 else:
-                    logger.warning(f"[diagnostico] BUSCARX P/Q: muestra 30 no-matches: {sorted(no_match_pq)[:30]}")
+                    logger.warning(
+                        f"[diagnostico] BUSCARX P/Q: muestra 30 no-matches: {sorted(no_match_pq)[:30]}"
+                    )
         else:
             logger.error("[diagnostico] Hoja Base subgerentes NO EXISTE.")
     except (AttributeError, KeyError, ValueError) as e:
@@ -130,7 +146,12 @@ def _leer_indices_lookups(writer):
 
 
 def insertar_formulas_ventas(
-    writer, tabla_primas, fila_inicio=2, fila_fin=31362, col_prima="G", logger=None,
+    writer,
+    tabla_primas,
+    fila_inicio=2,
+    fila_fin=31362,
+    col_prima="G",
+    logger=None,
 ):
     """Escribe VALORES COMPUTADOS en J, L, M, N, O, P, Q, R, S de Ventas.
 
@@ -182,14 +203,21 @@ def insertar_formulas_ventas(
             j_valor = None
         ws.cell(row=fila, column=_COL_J).value = j_valor
 
-        # L (12): CAJERO segun VALOR_PRIMA (137/290/378/658)
-        l_valor = _calcular_cajero(g_val=ws.cell(row=fila, column=7).value)
+        # L (12): CAJERO segun VALOR_PRIMA (desde tabla_primas dinámica)
+        l_valor = _calcular_incentivo(
+            g_val=ws.cell(row=fila, column=7).value,
+            tabla_primas=tabla_primas,
+            atributo="cajero",
+        )
         ws.cell(row=fila, column=_COL_L).value = l_valor
 
-        # M (13): SUBGERENTE segun VALOR_PRIMA (34/72/95/164)
-        m_valor = _calcular_subgerente(g_val=ws.cell(row=fila, column=7).value)
+        # M (13): SUBGERENTE segun VALOR_PRIMA (desde tabla_primas dinámica)
+        m_valor = _calcular_incentivo(
+            g_val=ws.cell(row=fila, column=7).value,
+            tabla_primas=tabla_primas,
+            atributo="subgerente",
+        )
         ws.cell(row=fila, column=_COL_M).value = m_valor
-
         # N (14): replica de A (CODIGO AGENCIA)
         ws.cell(row=fila, column=_COL_N).value = a_val
 
@@ -228,25 +256,20 @@ def insertar_formulas_ventas(
     _log("Total: 9 columnas (J, L, M, N, O, P, Q, R, S) con valores computados")
 
 
-def _calcular_cajero(g_val):
-    """Calcula el incentivo de cajero segun VALOR_PRIMA."""
+def _calcular_incentivo(g_val, tabla_primas, atributo):
+    """Calcula el incentivo (cajero/subgerente) segun VALOR_PRIMA.
+
+    Usa la tabla dinámica (TablaPrimas) cargada desde el xlsx de
+    comisiones o el fallback de Configuracion.json. Si la prima no
+    está en la tabla, devuelve 0.
+    """
     if g_val is None:
         return None
     try:
         g = int(g_val)
     except (TypeError, ValueError):
         return None
-    tabla = {2414: 137, 5072: 290, 6644: 378, 11597: 658}
-    return tabla.get(g, 0)
-
-
-def _calcular_subgerente(g_val):
-    """Calcula el incentivo de subgerente segun VALOR_PRIMA."""
-    if g_val is None:
-        return None
-    try:
-        g = int(g_val)
-    except (TypeError, ValueError):
-        return None
-    tabla = {2414: 34, 5072: 72, 6644: 95, 11597: 164}
-    return tabla.get(g, 0)
+    for prima in tabla_primas.primas:
+        if prima.valor == g:
+            return getattr(prima, atributo)
+    return 0

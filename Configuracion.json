@@ -251,28 +251,6 @@
       "nota": "El archivo del operador tiene una pestaña con nombre dinámico 'Soy Prevenido MM_YYYY' (ej: 'Soy Prevenido 06_2026'). Usamos regex para matchearla. NO confundir con la plantilla de salida 'Base incentivos - Soy Prevenido.xlsx' que tiene pestaña 'Ventas'."
     }
   },
-  "tabla_primas": [
-    {
-      "prima": 2414,
-      "cajero": 137,
-      "subgerente": 34
-    },
-    {
-      "prima": 5072,
-      "cajero": 290,
-      "subgerente": 72
-    },
-    {
-      "prima": 6644,
-      "cajero": 378,
-      "subgerente": 95
-    },
-    {
-      "prima": 11597,
-      "cajero": 658,
-      "subgerente": 164
-    }
-  ],
   "filtros_cargo": {
     "subgerente_oficina": "SUBGERENTE DE OFICINA",
     "red_agencias": [
@@ -284,5 +262,11 @@
       "CAJERO(A) PRINCIPAL  DE PLANTA",
       "AUXILIAR INTEGRAL"
     ]
+  },
+  "tabla_comisiones": {
+    "path": "Base_Comisiones_Insentivos.xlsx"
+  },
+  "correcciones_nombres": {
+    "path": "Bases/Correccion_nombres_base_subgerentes.xlsx"
   }
 }

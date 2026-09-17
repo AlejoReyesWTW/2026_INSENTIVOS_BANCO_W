@@ -24,7 +24,7 @@ class ArchivoGeneradoCard(ctk.CTkFrame):
 
     def __init__(
         self,
-        parent: ctk.CTk,
+        parent: ctk.CTkFrame | ctk.CTk,
         ruta: Path,
         titulo: str = "",
         on_descargar: callable = None,  # type: ignore[type-arg]
@@ -73,7 +73,18 @@ class ArchivoGeneradoCard(ctk.CTkFrame):
             wraplength=180,
             justify="center",
         )
-        self.label_nombre.pack(pady=(2, 10))
+        self.label_nombre.pack(pady=(2, 2))
+
+        # Ruta completa donde quedó guardado (leyenda).
+        self.label_ruta = ctk.CTkLabel(
+            self,
+            text=self._ruta.parent.name or "",
+            font=("Arial", 9),
+            text_color="#9ca3af",
+            wraplength=190,
+            justify="center",
+        )
+        self.label_ruta.pack(pady=(0, 8))
 
         # Botón Descargar.
         self.btn_descargar = ctk.CTkButton(
@@ -93,6 +104,13 @@ class ArchivoGeneradoCard(ctk.CTkFrame):
         """Actualiza el archivo que muestra el card."""
         self._ruta = ruta
         self.label_nombre.configure(text=ruta.name)
+        # Leyenda con la ruta donde quedó guardado.
+        padre = ruta.parent.resolve()
+        if len(str(padre)) > 55:
+            leyenda = f"📁 ...{str(padre)[-50:]}"
+        else:
+            leyenda = f"📁 {padre}"
+        self.label_ruta.configure(text=leyenda)
 
     def _on_click_descargar(self) -> None:
         """Llama al callback de descarga."""

@@ -12,7 +12,7 @@ from src.ui.constants import COLOR_ERROR, COLOR_TEXTO, COLOR_WARNING
 class LogTextbox(ctk.CTkTextbox):
     """Textbox que muestra logs con tags de color para cada nivel."""
 
-    def __init__(self, parent: ctk.CTk, **kwargs: object) -> None:
+    def __init__(self, parent: ctk.CTkFrame | ctk.CTk, **kwargs: object) -> None:
         super().__init__(parent, **kwargs)
         # Configurar tags de color.
         self.tag_config("info", foreground=COLOR_TEXTO)
