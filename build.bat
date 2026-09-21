@@ -4,7 +4,10 @@ REM  Compilar la app de Incentivos Banco W a un .exe
 REM  Genera la estructura de distribucion en la carpeta "dist"
 REM  - Destino del exe: dist/
 REM  - Plantilla y logo van DENTRO del exe (recursos --add-data)
-REM  - Fuera del exe SOLO: Configuracion.json + Base_Comisiones_Insentivos.xlsx
+REM  - Fuera del exe SOLO (editables por la operacion):
+REM      Configuracion.json
+REM      Base_Comisiones_Insentivos.xlsx   (tabla de incentivos)
+REM      Correccion_nombres_base_subgerentes.xlsx  (nombres a corregir)
 REM ============================================================
 chcp 65001 >nul
 setlocal
@@ -51,13 +54,19 @@ REM 4. Copiar SOLO los datos editables del usuario al lado del exe.
 echo [3/4] Copiando datos editables al lado del exe...
 copy /y "Configuracion.json" "dist\Configuracion.json" >nul
 copy /y "Base_Comisiones_Insentivos.xlsx" "dist\Base_Comisiones_Insentivos.xlsx" >nul
+if exist "Correccion_nombres_base_subgerentes.xlsx" (
+    copy /y "Correccion_nombres_base_subgerentes.xlsx" "dist\Correccion_nombres_base_subgerentes.xlsx" >nul
+)
 
 echo.
 echo [4/4] COMPILACION COMPLETA.
 echo.
 echo El ejecutable quedo en:  dist\Control Incentivos.exe
-echo Junto a el estan SOLO los datos editables:  Configuracion.json
-echo   y  Base_Comisiones_Insentivos.xlsx.
+echo Junto a el estan SOLO los datos editables:
+echo   - Configuracion.json
+echo   - Base_Comisiones_Insentivos.xlsx   (incentivos: la operacion puede cambiarlos)
+echo   - Correccion_nombres_base_subgerentes.xlsx  (si agregan nombres aqui,
+echo      el proceso los aplica en cada ciclo; no hace falta recompilar)
 echo La plantilla y el logo viajan DENTRO del exe.
 echo Al ejecutarlo se crean:  logs_automatizacion\  y  salidas\<anio>\<mes>\<dia>\
 echo.

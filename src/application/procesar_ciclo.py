@@ -370,7 +370,9 @@ class ProcesarCiclo:
         # Paso intermedio 2: completar la cédula (col A) de las filas nuevas
         # buscando su nombre en las filas anteriores de la base.
         fila_ini_pegadas = writer._workbook["Base subgerentes"].max_row - len(pares) + 1
-        completadas = completar_cedulas_en_base(writer, fila_inicio=fila_ini_pegadas)
+        completadas = completar_cedulas_en_base(
+            writer, fila_inicio=fila_ini_pegadas, logger=self.logger
+        )
         self.logger.info(f"[2a pasada] {completadas} cédulas completadas por nombre.")
 
         llenas = refrescar_pq(writer, fila_inicio=2, fila_fin=fila_fin)
