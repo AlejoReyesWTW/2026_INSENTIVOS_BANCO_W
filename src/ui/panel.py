@@ -217,13 +217,15 @@ class Panel:
             _paso("progreso", percent, mensaje)
 
         def _paso_log(nivel: str, mensaje: str) -> None:
-            """Refleja una línea del logger del proceso en la cola de la UI.
+            """Refleja un aviso del logger del proceso en la cola de la UI.
 
             Llamado desde el hilo de trabajo; solo encola (thread-safe).
-            Los WARNING/ERROR internos (ej: nombre sin cédula) aparecen
-            así también en la terminal del panel.
+            Solo WARNING/ERROR van al panel: los INFO internos (auditoría,
+            diagnósticos) quedan en el archivo del día — volcarlos todos al
+            textbox satura el hilo principal y congela la UI.
             """
-            _paso("log", mensaje, nivel.lower() if nivel in ("WARNING", "ERROR") else "INFO")
+            if nivel in ("WARNING", "ERROR"):
+                _paso("log", mensaje, nivel.lower())
 
         def _trabajo() -> None:
             """Cuerpo del hilo: ejecuta ProcesarCiclo y encola el resultado.

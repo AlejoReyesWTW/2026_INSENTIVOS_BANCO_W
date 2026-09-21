@@ -12,7 +12,11 @@ from src.ui.constants import COLOR_ERROR, COLOR_TEXTO, COLOR_WARNING
 class LogTextbox(ctk.CTkTextbox):
     """Textbox que muestra logs con tags de color para cada nivel."""
 
-    def __init__(self, parent: ctk.CTkFrame | ctk.CTk, **kwargs: object) -> None:
+    # Máximo de líneas visibles: al superarlo se borran las más viejas
+    # (evita que el widget crezca sin límite y congele la UI).
+    MAX_LINEAS = 500
+
+    def __init__(self, parent: ctk.CTkFrame | ctk.CTk, **kwargs) -> None:
         super().__init__(parent, **kwargs)
         # Configurar tags de color.
         self.tag_config("info", foreground=COLOR_TEXTO)
@@ -25,5 +29,13 @@ class LogTextbox(ctk.CTkTextbox):
         nivel_padded = f"{nivel:<7}"  # INFO   / WARNING / ERROR
         self.configure(state="normal")
         self.insert("end", f"[{hora}] {nivel_padded} | {mensaje}\n", nivel.lower())
+        self._recortar_lineas_viejas()
         self.see("end")
         self.configure(state="disabled")
+
+    def _recortar_lineas_viejas(self) -> None:
+        """Borra las primeras líneas si se superó el máximo."""
+        total = int(self.index("end-1c").split(".")[0])
+        if total > self.MAX_LINEAS:
+            sobrante = total - self.MAX_LINEAS
+            self.delete("1.0", f"{sobrante + 1}.0")
