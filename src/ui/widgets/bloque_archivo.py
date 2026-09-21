@@ -36,7 +36,7 @@ class BloqueArchivo(ctk.CTkFrame):
 
     def __init__(
         self,
-        parent: ctk.CTk,
+        parent: ctk.CTkFrame | ctk.CTk,
         tipo: TipoInsumo,
         on_change: callable = None,  # type: ignore[type-arg]
     ) -> None:
@@ -125,6 +125,19 @@ class BloqueArchivo(ctk.CTkFrame):
     def get_ruta(self) -> Path | None:
         """Retorna la ruta seleccionada o None si no hay archivo."""
         return self._ruta
+
+    def limpiar(self) -> None:
+        """Limpia la selección y devuelve el bloque a su estado inicial."""
+        self._ruta = None
+        self._validado = False
+        self.estado.configure(text="● Pendiente", text_color=COLOR_WTW)
+        self.label_info.configure(text="", text_color=COLOR_INPUT_TEXT)
+        self.btn_buscar.configure(
+            state="normal",
+            text="Buscar",
+            fg_color=COLOR_WTW,
+            hover_color=COLOR_WTW_HOVER,
+        )
 
     def is_validado(self) -> bool:
         """Retorna True solo si el archivo pasó la validación de estructura."""

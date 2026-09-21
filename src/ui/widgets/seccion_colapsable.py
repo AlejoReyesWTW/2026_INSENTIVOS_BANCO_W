@@ -16,7 +16,7 @@ class SeccionColapsable(ctk.CTkFrame):
 
     def __init__(
         self,
-        parent: ctk.CTk,
+        parent: ctk.CTkFrame | ctk.CTk,
         titulo: str,
         expandido: bool = True,
     ) -> None:
@@ -40,9 +40,11 @@ class SeccionColapsable(ctk.CTkFrame):
         self.header.pack(fill="x", padx=2, pady=2)
 
         # Contenido (se muestra solo si está expandido).
+        # Usamos fill="x" (sin expand) para que la sección colapsada quede
+        # compacta y el scroll del contenedor maneje el espacio vertical.
         self.contenido = ctk.CTkFrame(self, fg_color="transparent", border_width=0)
         if expandido:
-            self.contenido.pack(fill="both", expand=True, padx=2, pady=(2, 8))
+            self.contenido.pack(fill="x", padx=2, pady=(2, 8))
 
     def _texto_header(self) -> str:
         """Texto del header con flecha indicadora."""
@@ -55,7 +57,7 @@ class SeccionColapsable(ctk.CTkFrame):
             self.contenido.pack_forget()
             self._expandido = False
         else:
-            self.contenido.pack(fill="both", expand=True, padx=2, pady=(2, 8))
+            self.contenido.pack(fill="x", padx=2, pady=(2, 8))
             self._expandido = True
         self.header.configure(text=self._texto_header())
 

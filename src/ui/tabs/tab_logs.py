@@ -18,7 +18,7 @@ from src.ui.widgets import LogTextbox
 class TabLogs:
     """Tab que muestra log de ejecución y registro de errores en la misma vista."""
 
-    def __init__(self, parent: ctk.CTk) -> None:
+    def __init__(self, parent: ctk.CTkFrame) -> None:
         self.frame = ctk.CTkFrame(parent, fg_color="transparent")
         self._crear_widgets()
 

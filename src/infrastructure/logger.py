@@ -8,6 +8,7 @@ Niveles soportados: INFO, WARNING, ERROR.
 
 from __future__ import annotations
 
+import contextlib
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -29,10 +30,15 @@ class LoggerDiario:
         logger.info("Iniciando procesamiento...")
         logger.warning("Fila 123 sin match en BUSCARX")
         logger.error("No se pudo leer el archivo X")
+
+    Opcional: `on_log(nivel, mensaje)` se llama después de escribir al
+    archivo — útil para reflejar en una UI (puede venir de otro hilo;
+    el llamado debe encolar, no tocar widgets).
     """
 
-    def __init__(self, directorio: Path | str) -> None:
+    def __init__(self, directorio: Path | str, on_log=None) -> None:
         self.directorio = Path(directorio)
+        self.on_log = on_log  # opcional: callable(nivel, mensaje)
         # Crea el directorio (y padres) si no existe. Idempotente.
         self.directorio.mkdir(parents=True, exist_ok=True)
 
@@ -49,6 +55,12 @@ class LoggerDiario:
         # errors="replace" por si llega un carácter raro.
         with self._ruta_archivo_del_dia().open("a", encoding="utf-8") as f:
             f.write(linea)
+        # Reflejar en la UI (si hay callback). Llamar después de escribir.
+        if self.on_log is not None:
+            with contextlib.suppress(
+                TypeError, ValueError, RuntimeError, OSError
+            ):
+                self.on_log(nivel.value, mensaje)
 
     def info(self, mensaje: str) -> None:
         """Registra un mensaje informativo."""
