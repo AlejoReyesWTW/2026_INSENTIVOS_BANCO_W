@@ -30,12 +30,14 @@ from src.ui.constants import (
     ANCHO_VENTANA,
     COLOR_FONDO,
     COLOR_PANEL,
+    NOMBRE_APP,
     RUTA_CONFIG,
     RUTA_INTERNA,
     RUTA_LOGO_EXE,
     RUTA_LOGS,
     RUTA_PLANTILLA,
     RUTA_SALIDA_BASE,
+    VERSION,
 )
 from src.ui.tabs import TabArchivos, TabLogs
 from src.ui.widgets import ProgressDialog
@@ -47,7 +49,7 @@ class Panel:
     def __init__(self) -> None:
         ctk.set_appearance_mode("light")
         self.app = ctk.CTk()
-        self.app.title("WTW - Control de Automatización")
+        self.app.title(f"{NOMBRE_APP} v{VERSION}")
         self.app.geometry(f"{ANCHO_VENTANA}x{ALTO_VENTANA}")
         self.app.minsize(ANCHO_VENTANA, ALTO_VENTANA)
         self.app.configure(fg_color=COLOR_FONDO)
@@ -74,33 +76,42 @@ class Panel:
             pass
 
     def _cargar_logo(self) -> None:
-        """Carga el logo si existe en IMG/."""
+        """Carga el logo e información de versión en el header."""
+        header = ctk.CTkFrame(
+            self.app, height=80, fg_color=COLOR_PANEL, corner_radius=0
+        )
+        header.pack(fill="x")
+        header.pack_propagate(False)
+
         ruta_logo = RUTA_INTERNA / "IMG" / "imagen (1).png"
-        if not ruta_logo.exists():
-            return
-        try:
-            logo_img = Image.open(ruta_logo)
-            self.logo_ctk = CTkImage(
-                light_image=logo_img,
-                dark_image=logo_img,
-                size=(120, 50),
-            )
-            header = ctk.CTkFrame(
-                self.app, height=80, fg_color=COLOR_PANEL, corner_radius=0
-            )
-            header.pack(fill="x")
-            header.pack_propagate(False)
-            ctk.CTkLabel(header, image=self.logo_ctk, text="").pack(
-                side="left", padx=30
-            )
-            ctk.CTkLabel(
-                header,
-                text="Control de Automatización",
-                font=("Arial", 18),
-                text_color=COLOR_FONDO,
-            ).pack(side="left")
-        except (OSError, ValueError) as e:
-            self.logger.warning(f"No se pudo cargar el logo: {e}")
+        if ruta_logo.exists():
+            try:
+                logo_img = Image.open(ruta_logo)
+                self.logo_ctk = CTkImage(
+                    light_image=logo_img,
+                    dark_image=logo_img,
+                    size=(120, 50),
+                )
+                ctk.CTkLabel(header, image=self.logo_ctk, text="").pack(
+                    side="left", padx=30
+                )
+            except (OSError, ValueError) as e:
+                self.logger.warning(f"No se pudo cargar el logo: {e}")
+
+        ctk.CTkLabel(
+            header,
+            text=NOMBRE_APP,
+            font=("Arial", 18),
+            text_color=COLOR_FONDO,
+        ).pack(side="left")
+
+        # Versión a la derecha del header.
+        ctk.CTkLabel(
+            header,
+            text=f"v{VERSION}",
+            font=("Arial", 13, "bold"),
+            text_color="#9ca3af",
+        ).pack(side="right", padx=30)
 
     def _crear_tabs(self) -> None:
         """Crea el tabview con 2 tabs (Archivos, Ejecución)."""
