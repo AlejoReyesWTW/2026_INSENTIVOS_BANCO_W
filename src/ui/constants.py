@@ -65,6 +65,10 @@ RUTA_PLANTILLA = (
 )
 RUTA_LOGO_EXE = RUTA_INTERNA / "IMG" / "logo.ico"
 
+# Versión de la aplicación (SemVer). Primera a producción: 1.0.0.
+VERSION = "1.0.0"
+NOMBRE_APP = "Control de Automatización - Incentivos"
+
 # Tamaño de la ventana principal.
 ANCHO_VENTANA = 1100
 ALTO_VENTANA = 700
