@@ -1,4 +1,4 @@
-"""Widget: diálogo modal con barra de progreso, paso actual y tiempo transcurrido."""
+"""Widget: diálogo de progreso NO modal (se puede minimizar e interactuar)."""
 
 from __future__ import annotations
 
@@ -11,7 +11,10 @@ from src.ui.constants import COLOR_OK, COLOR_WTW_SECONDARY
 
 
 class ProgressDialog(ctk.CTkToplevel):
-    """Diálogo modal que muestra el avance del procesamiento.
+    """Diálogo NO modal que muestra el avance del procesamiento.
+
+    No usa grab_set/transient: la app sigue usable (se puede cambiar de tab,
+    minimizar esta ventana, etc.) mientras el proceso corre en su hilo.
 
     Layout:
       ⏳ Procesando ciclo...
@@ -28,9 +31,7 @@ class ProgressDialog(ctk.CTkToplevel):
         self.title("Procesando...")
         self.geometry("520x220")
         self.resizable(False, False)
-        # Modal: bloquea la ventana padre hasta cerrarse.
-        self.transient(parent)
-        self.grab_set()
+        # NO modal: sin transient ni grab_set para poder minimizar/interactuar.
         # Centrar sobre el padre.
         self.update_idletasks()
         with contextlib.suppress(AttributeError, ValueError):
@@ -43,6 +44,10 @@ class ProgressDialog(ctk.CTkToplevel):
         self._cerrado = False
 
         self._crear_widgets()
+        # Traer al frente y pintar antes de empezar.
+        with contextlib.suppress(AttributeError, ValueError):
+            self.lift()
+            self.update()
         self._actualizar_tiempo()
 
     def _crear_widgets(self) -> None:
@@ -115,5 +120,4 @@ class ProgressDialog(ctk.CTkToplevel):
             return
         self._cerrado = True
         with contextlib.suppress(AttributeError, ValueError):
-            self.grab_release()
-        self.destroy()
+            self.destroy()
