@@ -281,7 +281,8 @@ class Panel:
                 self._log(f"  Planilla de pago: {resultado.ruta_planilla_pago.name}")
             self.tab_archivos.mostrar_archivos_salida(archivos_salida)
             self.tab_archivos.set_tiempo_ejecucion(segundos)
-            self.tab_archivos.limpiar_entradas()
+            # Se CONSERVAN los insumos de entrada y las cards hasta que el
+            # usuario oprima "Limpiar todo".
             self.tab_archivos.btn_limpiar.configure(state="normal")
         elif resultado is not None:
             segundos = time.monotonic() - getattr(
