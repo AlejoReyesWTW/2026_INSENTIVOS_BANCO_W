@@ -311,6 +311,7 @@ def _leer_correcciones(
 def completar_cedulas_en_base(
     writer: ExcelWriter,
     fila_inicio: int | None = None,
+    logger=None,
 ) -> int:
     """Busca la cédula (col A) de los subgerentes recién pegados.
 
@@ -323,7 +324,9 @@ def completar_cedulas_en_base(
         Args:
             writer: ExcelWriter abierto sobre el archivo de salida.
             fila_inicio: primera fila de las nuevas (default = última en
-    orden de aparición de nombres sin cédula).
+        orden de aparición de nombres sin cédula).
+            logger: opcional; si se pasa, reporta por WARNING los nombres
+                que no pudieron encontrar cédula en la base.
 
         Returns:
             Cantidad de cédulas completadas.
@@ -345,6 +348,7 @@ def completar_cedulas_en_base(
             indice_nombres[clave] = (fila, cedula)
 
     completadas = 0
+    sin_match: list[str] = []
     for fila in range(fila_inicio, ws_b.max_row + 1):
         nombre = ws_b.cell(row=fila, column=_BS_COL_NOMBRE).value
         # Solo completar filas que tienen nombre pero NO cédula.
@@ -354,12 +358,20 @@ def completar_cedulas_en_base(
         clave = _normalizar_nombre(nombre)
         match = indice_nombres.get(clave)
         if match is None:
+            sin_match.append(str(nombre).strip())
             continue
         _fila_origen, cedula_origen = match
         if cedula_origen in (None, ""):
+            sin_match.append(str(nombre).strip())
             continue
         ws_b.cell(row=fila, column=_BS_COL_CEDULA, value=cedula_origen)
         completadas += 1
+
+    if logger is not None and sin_match:
+        logger.warning(
+            f"[completar_cedulas] {len(sin_match)} nombres sin cédula "
+            f"en Base subgerentes: {', '.join(sorted(set(sin_match))[:20])}"
+        )
     return completadas
 
 

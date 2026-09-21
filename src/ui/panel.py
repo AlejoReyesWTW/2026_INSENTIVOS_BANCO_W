@@ -205,16 +205,29 @@ class Panel:
             """Callback del proceso (hilo de trabajo → cola)."""
             _paso("progreso", percent, mensaje)
 
+        def _paso_log(nivel: str, mensaje: str) -> None:
+            """Refleja una línea del logger del proceso en la cola de la UI.
+
+            Llamado desde el hilo de trabajo; solo encola (thread-safe).
+            Los WARNING/ERROR internos (ej: nombre sin cédula) aparecen
+            así también en la terminal del panel.
+            """
+            _paso("log", mensaje, nivel.lower() if nivel in ("WARNING", "ERROR") else "INFO")
+
         def _trabajo() -> None:
             """Cuerpo del hilo: ejecuta ProcesarCiclo y encola el resultado.
 
             Nunca toca widgets: todo va a la cola. Las excepciones también.
+            El logger del proceso se envuelve con on_log que encola a la UI
+            (así los avisos WARNING/ERROR internos también se ven en el panel).
             """
+            logger_base = self.logger
+            logger_base.on_log = _paso_log
             try:
                 procesar = ProcesarCiclo(
                     insumos=insumos,
                     config_loader=self.config_loader,
-                    logger=self.logger,
+                    logger=logger_base,
                     ruta_plantilla=RUTA_PLANTILLA,
                     directorio_salida=RUTA_SALIDA_BASE,
                 )
@@ -226,6 +239,8 @@ class Panel:
             except Exception as e:  # noqa: BLE001
                 _paso("error", f"Error inesperado: {e}")
                 _paso("fin", None)
+            finally:
+                logger_base.on_log = None
 
         hilo = threading.Thread(target=_trabajo, name="proceso-ciclo", daemon=True)
         hilo.start()
