@@ -148,6 +148,15 @@ class ProcesarCiclo:
             self.directorio_salida.mkdir(parents=True, exist_ok=True)
             ruta_destino = self.directorio_salida / nombre_archivo
             ruta_destino = generar_nombre_unico_si_existe(ruta_destino)
+            # Sufijo de corrida (ej: "_20260921_183000" o "" si es la 1ª).
+            # Se guarda para aplicar el MISMO sufijo a la planilla de pago
+            # y que los 2 archivos de la corrida queden pareados.
+            stem_base = Path(nombre_archivo).stem
+            sufijo = (
+                ruta_destino.stem[len(stem_base):]
+                if ruta_destino.stem.startswith(stem_base)
+                else ""
+            )
             ruta_destino = copiar_plantilla_a_salida(
                 plantilla=self.ruta_plantilla,
                 directorio_salida=self.directorio_salida,
@@ -240,9 +249,15 @@ class ProcesarCiclo:
         finally:
             writer.cerrar()
 
-        ruta_planilla = self.directorio_salida / (
-            f"planilla de pago {periodo.mes} {periodo.anio}.xlsx"
+        # Planilla de pago: mismo sufijo de corrida que el archivo principal
+        # (si la corrida anterior dejó archivos, ambos se conservan pareados).
+        nombre_planilla = (
+            f"planilla de pago {periodo.mes} {periodo.anio}{sufijo}.xlsx"
         )
+        ruta_planilla = self.directorio_salida / nombre_planilla
+        if not sufijo:
+            # Caso borde: la planilla ya existía sin que existiera el principal.
+            ruta_planilla = generar_nombre_unico_si_existe(ruta_planilla)
         try:
             ruta_planilla = generar_planilla_pago(ruta_destino, ruta_planilla)
             self.logger.info(f"Planilla de pago generada: {ruta_planilla.name}")
