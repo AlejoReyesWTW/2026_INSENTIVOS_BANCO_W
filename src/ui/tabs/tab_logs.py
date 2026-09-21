@@ -18,6 +18,9 @@ from src.ui.widgets import LogTextbox
 class TabLogs:
     """Tab que muestra log de ejecución y registro de errores en la misma vista."""
 
+    # Máximo de líneas en la terminal de errores (evita saturación).
+    MAX_LINEAS_ERRORES = 500
+
     def __init__(self, parent: ctk.CTkFrame) -> None:
         self.frame = ctk.CTkFrame(parent, fg_color="transparent")
         self._crear_widgets()
@@ -82,5 +85,9 @@ class TabLogs:
         hora = datetime.now().strftime("%H:%M:%S")
         self.errores_text.configure(state="normal")
         self.errores_text.insert("end", f"[{hora}] {mensaje}\n")
+        # Recortar líneas viejas para no saturar el widget.
+        total = int(self.errores_text.index("end-1c").split(".")[0])
+        if total > self.MAX_LINEAS_ERRORES:
+            self.errores_text.delete("1.0", f"{total - self.MAX_LINEAS_ERRORES + 1}.0")
         self.errores_text.see("end")
         self.errores_text.configure(state="disabled")
