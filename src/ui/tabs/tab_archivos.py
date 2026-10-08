@@ -176,8 +176,22 @@ class TabArchivos:
         )
         self.label_tiempo.pack(fill="x", padx=10, pady=(0, 8))
 
+        # Leyenda de advertencia (cajeros sin cédula). Oculta hasta que haga falta.
+        self.label_advertencia = ctk.CTkLabel(
+            parent,
+            text="",
+            font=("Arial", 12, "bold"),
+            text_color="#7a4f01",
+            fg_color="#FDE68A",
+            corner_radius=8,
+            wraplength=680,
+            justify="left",
+            anchor="w",
+        )
+
         # Frame horizontal para las 2 cards.
         cards_frame = ctk.CTkFrame(parent, fg_color="transparent")
+        self.cards_frame = cards_frame
         cards_frame.pack(fill="x", padx=10, pady=5)
         cards_frame.grid_columnconfigure(0, weight=1)
         cards_frame.grid_columnconfigure(1, weight=1)
@@ -201,7 +215,43 @@ class TabArchivos:
 
     def set_tiempo_ejecucion(self, segundos: float) -> None:
         """Muestra el tiempo que tardó la ejecución arriba de las cards."""
-        self.label_tiempo.configure(text=f"⏱️ Tiempo de ejecución: {segundos:.1f}s")
+        if segundos >= 60:
+            minutos = int(segundos // 60)
+            resto = int(round(segundos % 60))
+            # Ajuste por si el redondeo llega a 60.
+            if resto == 60:
+                minutos += 1
+                resto = 0
+            texto = f"{minutos} min {resto} s"
+        else:
+            texto = f"{segundos:.1f}s"
+        self.label_tiempo.configure(text=f"⏱️ Tiempo de ejecución: {texto}")
+
+    def mostrar_advertencia_faltantes(
+        self, faltantes: list[str] | None = None
+    ) -> None:
+        """Muestra la leyenda amarilla de cajeros faltantes arriba de las cards.
+
+        Args:
+            faltantes: opcional, lista de COD_CAJERO sin cédula (col J vacía).
+                Si se pasa, se listan en la leyenda para que la operación no
+                tenga que buscarlos en el log.
+        """
+        texto = (
+            "⚠️ POR FAVOR REVISAR LOG DE EJECUCIÓN Y ERRORES. "
+            "SE DESCRIBEN CAJEROS FALTANTES. EL ARCHIVO QUEDÓ VACÍO EN ALGUNAS "
+            "CELDAS PORQUE NO SE ENCONTRARON ESTOS DATOS EN BASE SEGURO ACTUALIZADA."
+        )
+        if faltantes:
+            texto += "\nCÓDIGOS SIN CÉDULA: " + ", ".join(faltantes)
+        self.label_advertencia.configure(text=texto)
+        self.label_advertencia.pack(
+            fill="x", padx=10, pady=(0, 8), before=self.cards_frame
+        )
+
+    def ocultar_advertencia_faltantes(self) -> None:
+        """Oculta la leyenda de advertencia."""
+        self.label_advertencia.pack_forget()
 
     def _abrir_carpeta(self, ruta: Path) -> None:
         """Abre el archivo o la carpeta que lo contiene."""
@@ -345,6 +395,7 @@ class TabArchivos:
         """Limpia insumos, estados, salida y botón de procesamiento."""
         self.limpiar_entradas()
         self.ocultar_archivos_salida()
+        self.ocultar_advertencia_faltantes()
         self.estado_general.configure(
             text="● Esperando archivos válidos",
             text_color=COLOR_WTW_SECONDARY,

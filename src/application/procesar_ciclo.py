@@ -15,8 +15,9 @@ from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 
+import openpyxl
+
 from src.application.copiar_plantilla import copiar_plantilla_a_salida
-from src.application.detectar_ciclo import detectar_ciclo
 from src.application.generar_planilla_pago import generar_planilla_pago
 from src.application.insertar_formulas import insertar_formulas_ventas
 from src.application.llenar_base_red_agencias import llenar_base_red_agencias
@@ -33,7 +34,6 @@ from src.application.rellenar_pq_desde_directorio import (
 )
 from src.application.validar_insumos import ValidadorInsumos
 from src.domain.insumo import TipoInsumo
-from src.domain.mes_valido import validar_mes_insumos
 from src.infrastructure.config_loader import ConfigLoader
 from src.infrastructure.excel_writer import ExcelWriter
 from src.infrastructure.file_utils import generar_nombre_unico_si_existe
@@ -50,6 +50,7 @@ class ResultadoProceso:
     filas_base_subgerentes: int = 0
     filas_base_red_agencias: int = 0
     ruta_planilla_pago: Path | None = None
+    cajeros_faltantes: list[str] = field(default_factory=list)
     errores: list[str] = field(default_factory=list)
 
 
@@ -107,40 +108,17 @@ class ProcesarCiclo:
 
         _avance(15, "✅ Validación OK: estructura de insumos correcta.")
 
-        # 1b. Validar coherencia de mes de los insumos contra el mes actual.
-        _avance(
-            16,
-            "🗓️ Validando coherencia de mes en los archivos de insumo...",
-        )
-        validacion_mes = validar_mes_insumos(list(self.insumos.values()))
-        if not validacion_mes.valido:
-            for e in validacion_mes.errores:
-                self.logger.error(e)
-            return ResultadoProceso(exito=False, errores=validacion_mes.errores)
-
-        # 2. Detectar ciclo del nombre del SOY PREVENIDO.
+        # 2. Ruta del insumo SOY PREVENIDO (SIN validar mes/año: se aceptan
+        #    archivos de cualquier mes; la operación puede cargar meses atrasados).
         ruta_soy_prevenido = self.insumos[TipoInsumo.SOY_PREVENIDO]
-        try:
-            periodo = detectar_ciclo(ruta_soy_prevenido)
-        except Exception as e:
-            self.logger.error(f"No se pudo detectar el ciclo: {e}")
-            return ResultadoProceso(
-                exito=False,
-                errores=[f"No se pudo detectar el ciclo: {e}"],
-            )
-        _avance(20, f"🗓️ Ciclo detectado: {periodo}")
 
-        # 2b. Carpeta de salida por fecha: salidas/<año>/<mes>/<día>
-        #     (la operación la ve sin abrir la app).
-        directorio_fecha = (
-            self.directorio_salida / str(periodo.anio) / periodo.mes / _dia_actual()
-        )
-        self.directorio_salida = directorio_fecha
+        # 2b. Carpeta de salida por fecha ACTUAL: salidas/<año>/<mes>/<día>
+        #     (mantiene el historial de corridas; 2 corridas el mismo día se
+        #     diferencian con sufijo en el nombre del archivo).
+        self.directorio_salida = _carpeta_salida_actual(self.directorio_salida)
 
-        # 3. Construir nombre del archivo de salida.
-        nombre_archivo = (
-            f"base incentivos {periodo.mes} {periodo.anio} soy prevenido.xlsx"
-        )
+        # 3. Nombre estándar de salida (sin mes/año).
+        nombre_archivo = "base incentivos soy prevenido.xlsx"
         _avance(25, f"📁 Archivo de salida: {nombre_archivo}")
 
         # 4. Copiar plantilla al directorio de salida.
@@ -201,6 +179,7 @@ class ProcesarCiclo:
                 ruta_insumo=self.insumos[TipoInsumo.BASE_SEGUROS],
                 writer=writer,
                 logger=self.logger,
+                ruta_subgerentes=self._ruta_correcciones_nombres(),
             )
             _avance(83, f"🏦 Base red agencias: {filas_red} filas.")
 
@@ -243,6 +222,12 @@ class ProcesarCiclo:
                     f"🔄 Novedades: {novedades_applicadas} reemplazos procesados.",
                 )
 
+            # 6d. Auto-ajustar el ancho de columnas de TODAS las hojas del
+            #     archivo principal, incluyendo hojas adicionales de la
+            #     plantilla que la operación conserve.
+            for hoja in writer._workbook.sheetnames:
+                writer.autoajustar_columnas(hoja)
+
             # 7. Guardar.
             writer.guardar()
             _avance(98, "💾 Guardando archivo Excel principal...")
@@ -251,17 +236,15 @@ class ProcesarCiclo:
 
         # Planilla de pago: mismo sufijo de corrida que el archivo principal
         # (si la corrida anterior dejó archivos, ambos se conservan pareados).
-        nombre_planilla = (
-            f"planilla de pago {periodo.mes} {periodo.anio}{sufijo}.xlsx"
-        )
+        nombre_planilla = f"planilla de pago incentivos soy prevenido{sufijo}.xlsx"
         ruta_planilla = self.directorio_salida / nombre_planilla
         if not sufijo:
             # Caso borde: la planilla ya existía sin que existiera el principal.
             ruta_planilla = generar_nombre_unico_si_existe(ruta_planilla)
         try:
+            _avance(98, "📄 Creando segundo archivo (planilla de pago)...")
             ruta_planilla = generar_planilla_pago(ruta_destino, ruta_planilla)
             self.logger.info(f"Planilla de pago generada: {ruta_planilla.name}")
-            _avance(99, "📄 Planilla de pago generada correctamente.")
         except (OSError, KeyError, ValueError) as e:
             mensaje = f"No se pudo generar la planilla de pago: {e}"
             self.logger.error(mensaje)
@@ -275,6 +258,17 @@ class ProcesarCiclo:
                 errores=[mensaje],
             )
 
+        # 8. Validar la columna J (CC_CAJERO): detectar cajeros sin cédula.
+        _avance(99, "🔎 Analizando columna CC_CAJERO...")
+        cajeros_faltantes = _detectar_cajeros_sin_cedula(
+            ruta_destino, filas_ventas
+        )
+        if cajeros_faltantes:
+            self.logger.warning(
+                f"Se detectaron {len(cajeros_faltantes)} COD_CAJERO sin cédula "
+                "(columna J vacía): " + ", ".join(cajeros_faltantes)
+            )
+
         _avance(100, f"🎉 Procesamiento completado: {ruta_destino.name}")
         self.logger.info(f"Procesamiento exitoso: {ruta_destino}")
 
@@ -285,6 +279,7 @@ class ProcesarCiclo:
             filas_ventas=filas_ventas,
             filas_base_subgerentes=filas_subgerentes,
             filas_base_red_agencias=filas_red,
+            cajeros_faltantes=cajeros_faltantes,
         )
 
     def _aplicar_novedades(
@@ -411,6 +406,62 @@ class ProcesarCiclo:
         return ruta
 
 
-def _dia_actual() -> str:
-    """Devuelve el día actual como string (sin cero a la izquierda)."""
-    return str(date.today().day)
+_MESES_ES = (
+    "",
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre",
+)
+
+
+def _carpeta_salida_actual(base: Path) -> Path:
+    """Carpeta de salida por fecha actual: base/<año>/<mes>/<día>.
+
+    Mantiene el historial de corridas (2 corridas el mismo día se
+    diferencian con el sufijo que agrega generar_nombre_unico_si_existe).
+    """
+    hoy = date.today()
+    return base / str(hoy.year) / _MESES_ES[hoy.month] / str(hoy.day)
+
+
+def _detectar_cajeros_sin_cedula(
+    ruta_archivo: Path | str,
+    filas_ventas: int,
+) -> list[str]:
+    """Detecta los COD_CAJERO (col I) cuya CC_CAJERO (col J) quedó vacía.
+
+    Devuelve la lista de COD_CAJERO únicos (sin repetir) que no encontraron
+    cédula en Base red agencias.
+    """
+    if filas_ventas <= 0:
+        return []
+
+    wb = openpyxl.load_workbook(ruta_archivo, read_only=True, data_only=True)
+    faltantes: list[str] = []
+    vistos: set[str] = set()
+    try:
+        ws = wb["Ventas"]
+        for fila in ws.iter_rows(
+            min_row=2, max_row=filas_ventas + 1, values_only=True
+        ):
+            cod = fila[8] if len(fila) > 8 else None   # col I (COD_CAJERO)
+            cc = fila[9] if len(fila) > 9 else None    # col J (CC_CAJERO)
+            cod_vacio = cod is None or str(cod).strip() == ""
+            cc_vacio = cc is None or str(cc).strip() == ""
+            if cc_vacio and not cod_vacio:
+                clave = str(cod).strip()
+                if clave not in vistos:
+                    vistos.add(clave)
+                    faltantes.append(clave)
+    finally:
+        wb.close()
+    return faltantes

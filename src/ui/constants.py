@@ -65,8 +65,10 @@ RUTA_PLANTILLA = (
 )
 RUTA_LOGO_EXE = RUTA_INTERNA / "IMG" / "logo.ico"
 
-# Versión de la aplicación (SemVer). Primera a producción: 1.0.0.
-VERSION = "1.0.0"
+# Versión de la aplicación (SemVer).
+# 1.1.0: sin validación de mes/año, salida estándar, fix cédulas por nombre,
+#        normalización de fechas (dd/mm/yyyy) y planilla de pago con TOTAL.
+VERSION = "1.1.0"
 NOMBRE_APP = "Control de Automatización - Incentivos"
 
 # Tamaño de la ventana principal.
