@@ -121,16 +121,26 @@ def _diagnosticar_lookups(writer, logger, fila_inicio, fila_fin):
 
 
 def _leer_indices_lookups(writer):
-    """Lee Base red agencias y Base subgerentes y devuelve dicts para lookup."""
+    """Lee Base red agencias y Base subgerentes y devuelve dicts para lookup.
+
+    Devuelve 3 índices:
+      - usuarios_ra: USUARIO WINDOWS (col A) -> CEDULA (col C)
+      - nombres_ra:  EMPLEADO/COLABORADOR (col D) -> CEDULA (col C)
+      - empleados_bs: COD AGENCIA (col H) -> (cedula, nombre) de Base subgerentes
+    """
     wb = writer._workbook
     usuarios_ra = {}
+    nombres_ra = {}
     if "Base red agencias" in wb.sheetnames:
         ws_ra = wb["Base red agencias"]
         for fila in range(2, ws_ra.max_row + 1):
             usuario = ws_ra.cell(row=fila, column=1).value
             cedula = ws_ra.cell(row=fila, column=3).value
+            nombre = ws_ra.cell(row=fila, column=4).value
             if usuario is not None and cedula is not None:
                 usuarios_ra[str(usuario).strip()] = cedula
+            if nombre is not None and cedula is not None:
+                nombres_ra[str(nombre).strip()] = cedula
     empleados_bs = {}
     if "Base subgerentes" in wb.sheetnames:
         ws_bs = wb["Base subgerentes"]
@@ -142,7 +152,7 @@ def _leer_indices_lookups(writer):
                 s = str(cod).strip()
                 cod_int = int(s) if s.isdigit() else cod
                 empleados_bs[cod_int] = (cedula, nombre)
-    return usuarios_ra, empleados_bs
+    return usuarios_ra, nombres_ra, empleados_bs
 
 
 def insertar_formulas_ventas(
@@ -172,11 +182,12 @@ def insertar_formulas_ventas(
     if logger is not None:
         _diagnosticar_lookups(writer, logger, fila_inicio, fila_fin)
 
-    usuarios_ra, empleados_bs = _leer_indices_lookups(writer)
+    usuarios_ra, nombres_ra, empleados_bs = _leer_indices_lookups(writer)
     if logger is not None:
         logger.info(
             f"[insertar_formulas_ventas] Lookups: "
             f"{len(usuarios_ra)} usuarios en Base red agencias, "
+            f"{len(nombres_ra)} nombres en Base red agencias, "
             f"{len(empleados_bs)} COD_AGENCIA en Base subgerentes"
         )
 
@@ -185,22 +196,14 @@ def insertar_formulas_ventas(
 
     for fila in range(fila_inicio, fila_fin + 1):
         i_val = ws.cell(row=fila, column=9).value
+        k_val = ws.cell(row=fila, column=11).value
         a_val = ws.cell(row=fila, column=1).value
         b_val = ws.cell(row=fila, column=2).value
 
         # J (10): CEDULA = lookup en Base red agencias por USUARIO WINDOWS
-        if i_val is not None and isinstance(i_val, str):
-            usuario_buscado = i_val.strip()
-            j_valor = usuarios_ra.get(usuario_buscado)
-            if j_valor is None:
-                # Intentar sin distinguir mayusculas/minusculas
-                usuario_lower = usuario_buscado.lower()
-                for u, c in usuarios_ra.items():
-                    if u.lower() == usuario_lower:
-                        j_valor = c
-                        break
-        else:
-            j_valor = None
+        # (col I). Si no matchea por código, se intenta por NOMBRE (col K)
+        # contra la columna EMPLEADO/COLABORADOR.
+        j_valor = _buscar_cedula_cajero(i_val, k_val, usuarios_ra, nombres_ra)
         ws.cell(row=fila, column=_COL_J).value = j_valor
 
         # L (12): CAJERO segun VALOR_PRIMA (desde tabla_primas dinámica)
@@ -273,3 +276,38 @@ def _calcular_incentivo(g_val, tabla_primas, atributo):
         if prima.valor == g:
             return getattr(prima, atributo)
     return 0
+
+
+def _buscar_cedula_cajero(i_val, k_val, usuarios_ra, nombres_ra):
+    """Busca la cédula del cajero para la columna J.
+
+    Orden de búsqueda:
+      1. Por COD_CAJERO (col I) contra USUARIO WINDOWS (col A).
+      2. Si no matchea, por NOMBRE_CAJERO (col K, ya sin espacios al final)
+         contra EMPLEADO/COLABORADOR (col D).
+
+    Ambos con fallback case-insensitive.
+    """
+    # 1. Por código de usuario.
+    if i_val is not None and isinstance(i_val, str):
+        clave = i_val.strip()
+        j = usuarios_ra.get(clave)
+        if j is not None:
+            return j
+        clave_lower = clave.lower()
+        for u, c in usuarios_ra.items():
+            if u.lower() == clave_lower:
+                return c
+
+    # 2. Por nombre (col K, limpio de espacios).
+    if k_val is not None and isinstance(k_val, str):
+        nombre = k_val.strip()
+        j = nombres_ra.get(nombre)
+        if j is not None:
+            return j
+        nombre_lower = nombre.lower()
+        for n, c in nombres_ra.items():
+            if n.lower() == nombre_lower:
+                return c
+
+    return None

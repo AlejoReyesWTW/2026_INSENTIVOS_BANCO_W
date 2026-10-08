@@ -1,0 +1,41 @@
+[2026-09-08 16:00:39] [INFO] Soy Prevenido: archivo validado correctamente.
+[2026-09-08 16:00:45] [INFO] Base Banco Completa SS: archivo validado correctamente.
+[2026-09-08 16:00:51] [INFO] Base Seguros – Actualizada: archivo validado correctamente.
+[2026-09-08 16:00:57] [INFO] Directorio Nacional: archivo validado correctamente.
+[2026-09-08 16:01:03] [INFO] Formato novedades subgerente oficina para seguros: archivo validado correctamente.
+[2026-09-08 16:01:05] [INFO] Iniciando procesamiento del ciclo...
+[2026-09-08 16:01:05] [INFO] [0%] Iniciando procesamiento del ciclo.
+[2026-09-08 16:01:05] [INFO] [10%] Validando estructura de los insumos...
+[2026-09-08 16:01:07] [INFO] [15%] Validación OK.
+[2026-09-08 16:01:07] [INFO] [20%] Ciclo detectado: junio 2026
+[2026-09-08 16:01:07] [INFO] [25%] Archivo de salida: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-08 16:01:07] [INFO] [35%] Plantilla copiada a: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-08 16:01:07] [INFO] [45%] Llenando pestaña Ventas desde SOY PREVENIDO...
+[2026-09-08 16:01:19] [INFO] [60%] Ventas: 31361 filas escritas.
+[2026-09-08 16:01:19] [INFO] [65%] Llenando pestaña Base subgerentes...
+[2026-09-08 16:01:20] [INFO] [75%] Base subgerentes: 44 filas.
+[2026-09-08 16:01:20] [INFO] [78%] Llenando pestaña Base red agencias...
+[2026-09-08 16:01:33] [INFO] [83%] Base red agencias: 355 filas.
+[2026-09-08 16:01:33] [INFO] [85%] Insertando fórmulas en Ventas...
+[2026-09-08 16:01:33] [INFO] [insertar_formulas_ventas] Iniciando insercion de formulas en filas 2-31362 (31361 filas)
+[2026-09-08 16:01:33] [INFO] [diagnostico] Ventas: 355 COD_CAJERO unicos (col I), 134 CODIGO_AGENCIA unicos (col N).
+[2026-09-08 16:01:33] [INFO] [diagnostico] Base red agencias: 355 usuarios unicos.
+[2026-09-08 16:01:33] [INFO] [diagnostico] BUSCARX J (CC_CAJERO): 299 de 355 COD_CAJERO matchean.
+[2026-09-08 16:01:33] [WARNING] [diagnostico] BUSCARX J: 56 COD_CAJERO sin match. Muestra: ['vdrada', 'czuleta', 'ybotero', 'agiraldo', 'afalla']
+[2026-09-08 16:01:33] [INFO] [diagnostico] Base subgerentes: 44 COD_AGENCIA unicos (col H).
+[2026-09-08 16:01:33] [INFO] [diagnostico] BUSCARX P/Q (CC_SUBGERENTE/NOMBRE_SUBGERENTE): 44 de 134 CODIGO_AGENCIA matchean.
+[2026-09-08 16:01:33] [WARNING] [diagnostico] BUSCARX P/Q: 90 CODIGO_AGENCIA sin match. Muestra: [5, 10, 11, 12, 15]
+[2026-09-08 16:01:34] [INFO] [insertar_formulas_ventas] Formula J (BUSCARX CC_CAJERO) insertada en 31361 filas
+[2026-09-08 16:01:34] [INFO] [insertar_formulas_ventas] Formulas L y M (SI anidadas) insertadas en 31361 filas
+[2026-09-08 16:01:34] [INFO] [insertar_formulas_ventas] Replicas N (=A) y O (=B) insertadas en 31361 filas
+[2026-09-08 16:01:35] [INFO] [insertar_formulas_ventas] Formulas P y Q (BUSCARX CC_SUBGERENTE/NOMBRE_SUBGERENTE) insertadas en 31361 filas
+[2026-09-08 16:01:35] [INFO] [insertar_formulas_ventas] Replicas R (=P) y S (=Q) insertadas en 31361 filas
+[2026-09-08 16:01:35] [INFO] [insertar_formulas_ventas] Total: 9 columnas (J, L, M, N, O, P, Q, R, S) con formulas en 31361 filas
+[2026-09-08 16:01:35] [INFO] [95%] Fórmulas insertadas en Ventas.
+[2026-09-08 16:01:45] [INFO] [98%] Archivo guardado.
+[2026-09-08 16:01:45] [INFO] [100%] Procesamiento completado: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-08 16:01:45] [INFO] Procesamiento exitoso: C:\Users\Alejandro Reyes\Desktop\WTW\2026_INSENTIVOS_BANCO_W\Insumos\Salida\base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-08 16:01:45] [INFO] Archivo generado: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-08 16:01:45] [INFO]   Ventas: 31361 filas
+[2026-09-08 16:01:45] [INFO]   Base subgerentes: 44 filas
+[2026-09-08 16:01:45] [INFO]   Base red agencias: 355 filas

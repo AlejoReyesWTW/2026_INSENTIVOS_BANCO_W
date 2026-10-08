@@ -1,0 +1,52 @@
+[2026-09-07 13:08:13] [INFO] Soy Prevenido: archivo validado correctamente.
+[2026-09-07 13:08:22] [INFO] Base Banco Completa SS: archivo validado correctamente.
+[2026-09-07 13:08:29] [INFO] Base Seguros – Actualizada: archivo validado correctamente.
+[2026-09-07 13:08:35] [INFO] Directorio Nacional: archivo validado correctamente.
+[2026-09-07 13:08:40] [INFO] Formato novedades subgerente oficina para seguros: archivo validado correctamente.
+[2026-09-07 13:08:43] [INFO] Iniciando procesamiento del ciclo...
+[2026-09-07 13:08:43] [INFO] Iniciando procesamiento del ciclo.
+[2026-09-07 13:08:43] [INFO] Validando estructura de los insumos...
+[2026-09-07 13:08:45] [INFO] Validación OK.
+[2026-09-07 13:08:45] [INFO] Ciclo detectado: junio 2026
+[2026-09-07 13:08:45] [INFO] Archivo de salida: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-07 13:08:45] [INFO] Plantilla copiada a: C:\Users\Alejandro Reyes\Desktop\WTW\2026_INSENTIVOS_BANCO_W\Insumos\Salida\base incentivos junio 2026 soy prevenido_20260907_130845.xlsx
+[2026-09-07 13:08:45] [INFO] Llenando pestaña Ventas...
+[2026-09-07 13:08:56] [INFO] Ventas: 31361 filas.
+[2026-09-07 13:08:56] [INFO] Llenando pestaña Base subgerentes...
+[2026-09-07 13:08:57] [INFO] Base subgerentes: 44 filas.
+[2026-09-07 13:08:57] [INFO] Llenando pestaña Base red agencias...
+[2026-09-07 13:09:10] [INFO] Base red agencias: 355 filas.
+[2026-09-07 13:09:10] [INFO] Insertando fórmulas en Ventas...
+[2026-09-07 13:09:11] [INFO] Fórmulas insertadas en Ventas.
+[2026-09-07 13:09:21] [INFO] Procesamiento completado: C:\Users\Alejandro Reyes\Desktop\WTW\2026_INSENTIVOS_BANCO_W\Insumos\Salida\base incentivos junio 2026 soy prevenido_20260907_130845.xlsx
+[2026-09-07 13:09:21] [INFO] Archivo generado: base incentivos junio 2026 soy prevenido_20260907_130845.xlsx
+[2026-09-07 13:09:21] [INFO]   Ventas: 31361 filas
+[2026-09-07 13:09:21] [INFO]   Base subgerentes: 44 filas
+[2026-09-07 13:09:21] [INFO]   Base red agencias: 355 filas
+[2026-09-07 17:53:12] [INFO] Soy Prevenido: archivo validado correctamente.
+[2026-09-07 17:53:18] [INFO] Base Banco Completa SS: archivo validado correctamente.
+[2026-09-07 17:53:25] [INFO] Base Seguros – Actualizada: archivo validado correctamente.
+[2026-09-07 17:53:30] [INFO] Directorio Nacional: archivo validado correctamente.
+[2026-09-07 17:53:35] [INFO] Formato novedades subgerente oficina para seguros: archivo validado correctamente.
+[2026-09-07 17:53:40] [INFO] Iniciando procesamiento del ciclo...
+[2026-09-07 17:53:40] [INFO] [0%] Iniciando procesamiento del ciclo.
+[2026-09-07 17:53:40] [INFO] [10%] Validando estructura de los insumos...
+[2026-09-07 17:53:42] [INFO] [15%] Validación OK.
+[2026-09-07 17:53:42] [INFO] [20%] Ciclo detectado: junio 2026
+[2026-09-07 17:53:42] [INFO] [25%] Archivo de salida: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-07 17:53:42] [INFO] [35%] Plantilla copiada a: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-07 17:53:42] [INFO] [45%] Llenando pestaña Ventas desde SOY PREVENIDO...
+[2026-09-07 17:53:51] [INFO] [60%] Ventas: 31361 filas escritas.
+[2026-09-07 17:53:51] [INFO] [65%] Llenando pestaña Base subgerentes...
+[2026-09-07 17:53:52] [INFO] [75%] Base subgerentes: 44 filas.
+[2026-09-07 17:53:52] [INFO] [78%] Llenando pestaña Base red agencias...
+[2026-09-07 17:54:02] [INFO] [83%] Base red agencias: 355 filas.
+[2026-09-07 17:54:02] [INFO] [85%] Insertando fórmulas en Ventas...
+[2026-09-07 17:54:04] [INFO] [95%] Fórmulas insertadas en Ventas.
+[2026-09-07 17:54:13] [INFO] [98%] Archivo guardado.
+[2026-09-07 17:54:13] [INFO] [100%] Procesamiento completado: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-07 17:54:13] [INFO] Procesamiento exitoso: C:\Users\Alejandro Reyes\Desktop\WTW\2026_INSENTIVOS_BANCO_W\Insumos\Salida\base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-07 17:54:13] [INFO] Archivo generado: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-07 17:54:13] [INFO]   Ventas: 31361 filas
+[2026-09-07 17:54:13] [INFO]   Base subgerentes: 44 filas
+[2026-09-07 17:54:13] [INFO]   Base red agencias: 355 filas

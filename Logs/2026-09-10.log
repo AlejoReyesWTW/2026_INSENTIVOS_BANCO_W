@@ -1,0 +1,139 @@
+[2026-09-10 19:15:40] [INFO] Soy Prevenido: archivo validado correctamente.
+[2026-09-10 19:15:44] [INFO] Base Banco Completa SS: archivo validado correctamente.
+[2026-09-10 19:15:51] [INFO] Base Seguros – Actualizada: archivo validado correctamente.
+[2026-09-10 19:15:58] [INFO] Directorio Nacional: archivo validado correctamente.
+[2026-09-10 19:16:05] [INFO] Formato novedades subgerente oficina para seguros: archivo validado correctamente.
+[2026-09-10 19:16:06] [INFO] Iniciando procesamiento del ciclo...
+[2026-09-10 19:16:06] [INFO] [0%] Iniciando procesamiento del ciclo...
+[2026-09-10 19:16:06] [INFO] [10%] 📄 Armando documento principal: validando archivos de insumo...
+[2026-09-10 19:16:08] [INFO] [15%] ✅ Validación OK: estructura de insumos correcta.
+[2026-09-10 19:16:08] [INFO] [20%] 🗓️ Ciclo detectado: junio 2026
+[2026-09-10 19:16:08] [INFO] [25%] 📁 Archivo de salida: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-10 19:16:08] [INFO] [35%] 📋 Plantilla base copiada: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-10 19:16:08] [INFO] [45%] 🔗 Haciendo cruces con archivos excel: llenando pestaña Ventas...
+[2026-09-10 19:16:18] [INFO] [55%] 📊 Ventas: 31361 filas escritas.
+[2026-09-10 19:16:18] [INFO] [65%] 🔗 Cruce con base de empleados: llenando Base subgerentes...
+[2026-09-10 19:16:18] [INFO] [72%] 👥 Base subgerentes: 44 filas.
+[2026-09-10 19:16:18] [INFO] [78%] 🔗 Cruce con base de agencias: llenando Base red agencias...
+[2026-09-10 19:16:18] [INFO] [llenar_base_red_agencias] Inicio. Input: C:\Users\Alejandro Reyes\Desktop\WTW\DocumentosExcelPrueba\Base Seguros - Actualizada.xlsx, Hoja: BANCO
+[2026-09-10 19:16:18] [INFO] [llenar_base_red_agencias] Encabezados leídos (9): ['cedula', 'usuario windows', 'iniciales', 'colaborador', 'cargo', 'regional', 'oficina', 'fecha ingreso']...
+[2026-09-10 19:16:18] [INFO] [llenar_base_red_agencias] Columna CARGO encontrada en idx 4
+[2026-09-10 19:16:18] [INFO] [llenar_base_red_agencias] Mapping construido: 5/5 columnas encontradas: [1, 2, 3, 4, 5]
+[2026-09-10 19:16:29] [INFO] [llenar_base_red_agencias] Total filas leídas del input: 407
+[2026-09-10 19:16:29] [INFO] [llenar_base_red_agencias] Filas que pasaron el filtro CARGO: 397 (de 407 totales)
+[2026-09-10 19:16:29] [INFO] [llenar_base_red_agencias] Muestra USUARIO WINDOWS (uppercase): 'WYANEZ'
+[2026-09-10 19:16:29] [INFO] [llenar_base_red_agencias] Escritura completada: 397 filas en hoja 'Base red agencias'
+[2026-09-10 19:16:29] [INFO] [83%] 🏦 Base red agencias: 397 filas.
+[2026-09-10 19:16:29] [INFO] [85%] 🧮 Calculando incentivos y cruzando datos de respaldo...
+[2026-09-10 19:16:29] [INFO] [insertar_formulas_ventas] Escribiendo valores en filas 2-31362 (31361 filas)
+[2026-09-10 19:16:29] [INFO] [diagnostico] Ventas: 355 COD_CAJERO unicos, 134 CODIGO_AGENCIA unicos.
+[2026-09-10 19:16:29] [INFO] [diagnostico] Base red agencias: 397 usuarios unicos.
+[2026-09-10 19:16:29] [INFO] [diagnostico] BUSCARX J: 340/355 matchean (95.8%).
+[2026-09-10 19:16:29] [WARNING] [diagnostico] BUSCARX J: 15 COD_CAJERO sin match.
+[2026-09-10 19:16:29] [WARNING] [diagnostico] BUSCARX J: lista no-matches: ['BCASTILLO', 'BRARODRIGUEZGA', 'DANLOPEZSA', 'DMJIMENEZ', 'DPADILLA', 'EPALACIOS', 'HZAMORA', 'JESTACIO', 'JIMBOL', 'LEOGARCIALE', 'LIMEDINA', 'MALOZANO', 'MDAVID', 'VDRADA', 'YBOTERO']
+[2026-09-10 19:16:29] [INFO] [diagnostico] Base subgerentes: 44 COD_AGENCIA unicos.
+[2026-09-10 19:16:29] [INFO] [diagnostico] BUSCARX P/Q: 44/134 matchean (32.8%).
+[2026-09-10 19:16:29] [WARNING] [diagnostico] BUSCARX P/Q: 90 CODIGO_AGENCIA sin match.
+[2026-09-10 19:16:29] [WARNING] [diagnostico] BUSCARX P/Q: muestra 30 no-matches: [5, 10, 11, 12, 15, 18, 20, 21, 23, 25, 27, 28, 32, 34, 36, 41, 42, 45, 46, 47, 48, 50, 52, 53, 58, 59, 61, 62, 63, 64]
+[2026-09-10 19:16:29] [INFO] [insertar_formulas_ventas] Lookups: 397 usuarios en Base red agencias, 44 COD_AGENCIA en Base subgerentes
+[2026-09-10 19:16:30] [INFO] [insertar_formulas_ventas] Valores escritos en 31361 filas
+[2026-09-10 19:16:30] [INFO] [insertar_formulas_ventas] Total: 9 columnas (J, L, M, N, O, P, Q, R, S) con valores computados
+[2026-09-10 19:16:30] [INFO] [95%] 🧮 Incentivos calculados en Ventas.
+[2026-09-10 19:16:37] [INFO] [98%] 💾 Guardando archivo Excel principal...
+[2026-09-10 19:16:37] [INFO] [100%] 🎉 Procesamiento completado: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-10 19:16:38] [INFO] Procesamiento exitoso: C:\Users\Alejandro Reyes\Desktop\WTW\2026_INSENTIVOS_BANCO_W\Insumos\Salida\base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-10 19:16:38] [INFO] Archivo generado: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-10 19:16:38] [INFO]   Ventas: 31361 filas
+[2026-09-10 19:16:38] [INFO]   Base subgerentes: 44 filas
+[2026-09-10 19:16:38] [INFO]   Base red agencias: 397 filas
+[2026-09-10 19:16:54] [INFO] Iniciando procesamiento del ciclo...
+[2026-09-10 19:16:54] [INFO] [0%] Iniciando procesamiento del ciclo...
+[2026-09-10 19:16:54] [INFO] [10%] 📄 Armando documento principal: validando archivos de insumo...
+[2026-09-10 19:16:56] [INFO] [15%] ✅ Validación OK: estructura de insumos correcta.
+[2026-09-10 19:16:56] [INFO] [20%] 🗓️ Ciclo detectado: junio 2026
+[2026-09-10 19:16:56] [INFO] [25%] 📁 Archivo de salida: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-10 19:16:56] [INFO] [35%] 📋 Plantilla base copiada: base incentivos junio 2026 soy prevenido_20260910_191656.xlsx
+[2026-09-10 19:16:56] [INFO] [45%] 🔗 Haciendo cruces con archivos excel: llenando pestaña Ventas...
+[2026-09-10 19:17:06] [INFO] [55%] 📊 Ventas: 31361 filas escritas.
+[2026-09-10 19:17:06] [INFO] [65%] 🔗 Cruce con base de empleados: llenando Base subgerentes...
+[2026-09-10 19:17:06] [INFO] [72%] 👥 Base subgerentes: 44 filas.
+[2026-09-10 19:17:06] [INFO] [78%] 🔗 Cruce con base de agencias: llenando Base red agencias...
+[2026-09-10 19:17:06] [INFO] [llenar_base_red_agencias] Inicio. Input: C:\Users\Alejandro Reyes\Desktop\WTW\DocumentosExcelPrueba\Base Seguros - Actualizada.xlsx, Hoja: BANCO
+[2026-09-10 19:17:06] [INFO] [llenar_base_red_agencias] Encabezados leídos (9): ['cedula', 'usuario windows', 'iniciales', 'colaborador', 'cargo', 'regional', 'oficina', 'fecha ingreso']...
+[2026-09-10 19:17:06] [INFO] [llenar_base_red_agencias] Columna CARGO encontrada en idx 4
+[2026-09-10 19:17:06] [INFO] [llenar_base_red_agencias] Mapping construido: 5/5 columnas encontradas: [1, 2, 3, 4, 5]
+[2026-09-10 19:17:18] [INFO] [llenar_base_red_agencias] Total filas leídas del input: 407
+[2026-09-10 19:17:18] [INFO] [llenar_base_red_agencias] Filas que pasaron el filtro CARGO: 397 (de 407 totales)
+[2026-09-10 19:17:18] [INFO] [llenar_base_red_agencias] Muestra USUARIO WINDOWS (uppercase): 'WYANEZ'
+[2026-09-10 19:17:18] [INFO] [llenar_base_red_agencias] Escritura completada: 397 filas en hoja 'Base red agencias'
+[2026-09-10 19:17:18] [INFO] [83%] 🏦 Base red agencias: 397 filas.
+[2026-09-10 19:17:18] [INFO] [85%] 🧮 Calculando incentivos y cruzando datos de respaldo...
+[2026-09-10 19:17:18] [INFO] [insertar_formulas_ventas] Escribiendo valores en filas 2-31362 (31361 filas)
+[2026-09-10 19:17:18] [INFO] [diagnostico] Ventas: 355 COD_CAJERO unicos, 134 CODIGO_AGENCIA unicos.
+[2026-09-10 19:17:18] [INFO] [diagnostico] Base red agencias: 397 usuarios unicos.
+[2026-09-10 19:17:18] [INFO] [diagnostico] BUSCARX J: 340/355 matchean (95.8%).
+[2026-09-10 19:17:18] [WARNING] [diagnostico] BUSCARX J: 15 COD_CAJERO sin match.
+[2026-09-10 19:17:18] [WARNING] [diagnostico] BUSCARX J: lista no-matches: ['BCASTILLO', 'BRARODRIGUEZGA', 'DANLOPEZSA', 'DMJIMENEZ', 'DPADILLA', 'EPALACIOS', 'HZAMORA', 'JESTACIO', 'JIMBOL', 'LEOGARCIALE', 'LIMEDINA', 'MALOZANO', 'MDAVID', 'VDRADA', 'YBOTERO']
+[2026-09-10 19:17:18] [INFO] [diagnostico] Base subgerentes: 44 COD_AGENCIA unicos.
+[2026-09-10 19:17:18] [INFO] [diagnostico] BUSCARX P/Q: 44/134 matchean (32.8%).
+[2026-09-10 19:17:18] [WARNING] [diagnostico] BUSCARX P/Q: 90 CODIGO_AGENCIA sin match.
+[2026-09-10 19:17:18] [WARNING] [diagnostico] BUSCARX P/Q: muestra 30 no-matches: [5, 10, 11, 12, 15, 18, 20, 21, 23, 25, 27, 28, 32, 34, 36, 41, 42, 45, 46, 47, 48, 50, 52, 53, 58, 59, 61, 62, 63, 64]
+[2026-09-10 19:17:18] [INFO] [insertar_formulas_ventas] Lookups: 397 usuarios en Base red agencias, 44 COD_AGENCIA en Base subgerentes
+[2026-09-10 19:17:18] [INFO] [insertar_formulas_ventas] Valores escritos en 31361 filas
+[2026-09-10 19:17:18] [INFO] [insertar_formulas_ventas] Total: 9 columnas (J, L, M, N, O, P, Q, R, S) con valores computados
+[2026-09-10 19:17:18] [INFO] [95%] 🧮 Incentivos calculados en Ventas.
+[2026-09-10 19:17:26] [INFO] [98%] 💾 Guardando archivo Excel principal...
+[2026-09-10 19:17:26] [INFO] [100%] 🎉 Procesamiento completado: base incentivos junio 2026 soy prevenido_20260910_191656.xlsx
+[2026-09-10 19:17:26] [INFO] Procesamiento exitoso: C:\Users\Alejandro Reyes\Desktop\WTW\2026_INSENTIVOS_BANCO_W\Insumos\Salida\base incentivos junio 2026 soy prevenido_20260910_191656.xlsx
+[2026-09-10 19:17:26] [INFO] Archivo generado: base incentivos junio 2026 soy prevenido_20260910_191656.xlsx
+[2026-09-10 19:17:26] [INFO]   Ventas: 31361 filas
+[2026-09-10 19:17:26] [INFO]   Base subgerentes: 44 filas
+[2026-09-10 19:17:26] [INFO]   Base red agencias: 397 filas
+[2026-09-10 19:21:21] [INFO] Soy Prevenido: archivo validado correctamente.
+[2026-09-10 19:21:25] [INFO] Base Banco Completa SS: archivo validado correctamente.
+[2026-09-10 19:21:35] [INFO] Base Seguros – Actualizada: archivo validado correctamente.
+[2026-09-10 19:21:57] [INFO] Directorio Nacional: archivo validado correctamente.
+[2026-09-10 19:22:04] [INFO] Formato novedades subgerente oficina para seguros: archivo validado correctamente.
+[2026-09-10 19:22:05] [INFO] Iniciando procesamiento del ciclo...
+[2026-09-10 19:22:05] [INFO] [0%] Iniciando procesamiento del ciclo...
+[2026-09-10 19:22:05] [INFO] [10%] 📄 Armando documento principal: validando archivos de insumo...
+[2026-09-10 19:22:07] [INFO] [15%] ✅ Validación OK: estructura de insumos correcta.
+[2026-09-10 19:22:07] [INFO] [20%] 🗓️ Ciclo detectado: junio 2026
+[2026-09-10 19:22:07] [INFO] [25%] 📁 Archivo de salida: base incentivos junio 2026 soy prevenido.xlsx
+[2026-09-10 19:22:07] [INFO] [35%] 📋 Plantilla base copiada: base incentivos junio 2026 soy prevenido_20260910_192207.xlsx
+[2026-09-10 19:22:07] [INFO] [45%] 🔗 Haciendo cruces con archivos excel: llenando pestaña Ventas...
+[2026-09-10 19:22:17] [INFO] [55%] 📊 Ventas: 31361 filas escritas.
+[2026-09-10 19:22:17] [INFO] [65%] 🔗 Cruce con base de empleados: llenando Base subgerentes...
+[2026-09-10 19:22:18] [INFO] [72%] 👥 Base subgerentes: 44 filas.
+[2026-09-10 19:22:18] [INFO] [78%] 🔗 Cruce con base de agencias: llenando Base red agencias...
+[2026-09-10 19:22:18] [INFO] [llenar_base_red_agencias] Inicio. Input: C:\Users\Alejandro Reyes\Desktop\WTW\DocumentosExcelPrueba\Base Seguros - Actualizada.xlsx, Hoja: BANCO
+[2026-09-10 19:22:18] [INFO] [llenar_base_red_agencias] Encabezados leídos (9): ['cedula', 'usuario windows', 'iniciales', 'colaborador', 'cargo', 'regional', 'oficina', 'fecha ingreso']...
+[2026-09-10 19:22:18] [INFO] [llenar_base_red_agencias] Columna CARGO encontrada en idx 4
+[2026-09-10 19:22:18] [INFO] [llenar_base_red_agencias] Mapping construido: 5/5 columnas encontradas: [1, 2, 3, 4, 5]
+[2026-09-10 19:22:29] [INFO] [llenar_base_red_agencias] Total filas leídas del input: 407
+[2026-09-10 19:22:29] [INFO] [llenar_base_red_agencias] Filas que pasaron el filtro CARGO: 397 (de 407 totales)
+[2026-09-10 19:22:29] [INFO] [llenar_base_red_agencias] Muestra USUARIO WINDOWS (uppercase): 'WYANEZ'
+[2026-09-10 19:22:29] [INFO] [llenar_base_red_agencias] Escritura completada: 397 filas en hoja 'Base red agencias'
+[2026-09-10 19:22:29] [INFO] [83%] 🏦 Base red agencias: 397 filas.
+[2026-09-10 19:22:29] [INFO] [85%] 🧮 Calculando incentivos y cruzando datos de respaldo...
+[2026-09-10 19:22:29] [INFO] [insertar_formulas_ventas] Escribiendo valores en filas 2-31362 (31361 filas)
+[2026-09-10 19:22:29] [INFO] [diagnostico] Ventas: 355 COD_CAJERO unicos, 134 CODIGO_AGENCIA unicos.
+[2026-09-10 19:22:29] [INFO] [diagnostico] Base red agencias: 397 usuarios unicos.
+[2026-09-10 19:22:29] [INFO] [diagnostico] BUSCARX J: 340/355 matchean (95.8%).
+[2026-09-10 19:22:29] [WARNING] [diagnostico] BUSCARX J: 15 COD_CAJERO sin match.
+[2026-09-10 19:22:29] [WARNING] [diagnostico] BUSCARX J: lista no-matches: ['BCASTILLO', 'BRARODRIGUEZGA', 'DANLOPEZSA', 'DMJIMENEZ', 'DPADILLA', 'EPALACIOS', 'HZAMORA', 'JESTACIO', 'JIMBOL', 'LEOGARCIALE', 'LIMEDINA', 'MALOZANO', 'MDAVID', 'VDRADA', 'YBOTERO']
+[2026-09-10 19:22:29] [INFO] [diagnostico] Base subgerentes: 44 COD_AGENCIA unicos.
+[2026-09-10 19:22:29] [INFO] [diagnostico] BUSCARX P/Q: 44/134 matchean (32.8%).
+[2026-09-10 19:22:29] [WARNING] [diagnostico] BUSCARX P/Q: 90 CODIGO_AGENCIA sin match.
+[2026-09-10 19:22:29] [WARNING] [diagnostico] BUSCARX P/Q: muestra 30 no-matches: [5, 10, 11, 12, 15, 18, 20, 21, 23, 25, 27, 28, 32, 34, 36, 41, 42, 45, 46, 47, 48, 50, 52, 53, 58, 59, 61, 62, 63, 64]
+[2026-09-10 19:22:29] [INFO] [insertar_formulas_ventas] Lookups: 397 usuarios en Base red agencias, 44 COD_AGENCIA en Base subgerentes
+[2026-09-10 19:22:30] [INFO] [insertar_formulas_ventas] Valores escritos en 31361 filas
+[2026-09-10 19:22:30] [INFO] [insertar_formulas_ventas] Total: 9 columnas (J, L, M, N, O, P, Q, R, S) con valores computados
+[2026-09-10 19:22:30] [INFO] [95%] 🧮 Incentivos calculados en Ventas.
+[2026-09-10 19:22:38] [INFO] [98%] 💾 Guardando archivo Excel principal...
+[2026-09-10 19:22:38] [INFO] [100%] 🎉 Procesamiento completado: base incentivos junio 2026 soy prevenido_20260910_192207.xlsx
+[2026-09-10 19:22:38] [INFO] Procesamiento exitoso: C:\Users\Alejandro Reyes\Desktop\WTW\2026_INSENTIVOS_BANCO_W\Insumos\Salida\base incentivos junio 2026 soy prevenido_20260910_192207.xlsx
+[2026-09-10 19:22:38] [INFO] Archivo generado: base incentivos junio 2026 soy prevenido_20260910_192207.xlsx
+[2026-09-10 19:22:38] [INFO]   Ventas: 31361 filas
+[2026-09-10 19:22:38] [INFO]   Base subgerentes: 44 filas
+[2026-09-10 19:22:38] [INFO]   Base red agencias: 397 filas

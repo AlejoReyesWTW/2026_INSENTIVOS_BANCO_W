@@ -157,6 +157,34 @@ class ExcelWriter:
         for fila in range(fila_inicio, fila_fin + 1):
             ws.cell(row=fila, column=col).number_format = formato
 
+    def autoajustar_columnas(
+        self,
+        hoja: str,
+        max_ancho: int = 45,
+        min_ancho: int = 8,
+    ) -> None:
+        """Ajusta el ancho de cada columna al contenido (para ver el header).
+
+        Args:
+            hoja: nombre de la hoja.
+            max_ancho: ancho maximo permitido.
+            min_ancho: ancho minimo permitido.
+        """
+        if hoja not in self._workbook.sheetnames:
+            raise HojaFaltanteError(f"No existe la hoja '{hoja}' en {self.ruta}.")
+        ws = self._workbook[hoja]
+        for col_cells in ws.columns:
+            col_letter = col_cells[0].column_letter
+            max_largo = 0
+            for celda in col_cells:
+                if celda.value is None:
+                    continue
+                largo = len(str(celda.value))
+                if largo > max_largo:
+                    max_largo = largo
+            ancho = min(max_largo + 2, max_ancho)
+            ws.column_dimensions[col_letter].width = max(ancho, min_ancho)
+
     def cerrar(self) -> None:
         """Cierra el workbook (libera el handle del archivo)."""
         self._workbook.close()

@@ -10,10 +10,11 @@ columnas esperadas en cada hoja del archivo.
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from src.domain.fecha import parsear_fecha
 from src.domain.mapeo import normalizar_header
 from src.infrastructure.excel_reader import ExcelReader
 from src.infrastructure.excel_writer import ExcelWriter
@@ -42,6 +43,8 @@ MAPEO_VENTAS: dict[str, int] = {
 }
 
 COL_COD_CAJERO = 9  # Columna I en la salida (1-based).
+COL_NOMBRE_CAJERO = 11  # Columna K en la salida (1-based).
+COL_FECHA_TRANSACCION = 6  # Columna F en la salida (1-based).
 
 # Filas a probar para encontrar los encabezados (caso común: título en fila 1).
 _FILAS_ENCABEZADO_A_INTENTAR = (1, 2, 3, 4, 5)
@@ -73,6 +76,16 @@ def _limpiar_cod_cajero(valor: Any) -> Any:
     return valor.split("@", 1)[0]
 
 
+def _normalizar_fecha(valor):
+    """Convierte un valor de fecha a date (normalizado a dd/mm/yyyy).
+
+    Acepta strings en cualquier formato (2/6/26, 2/6/2026, 01/06/2026, etc.),
+    date y datetime. Si no se puede parsear, devuelve el valor original.
+    """
+    fecha = parsear_fecha(valor)
+    return fecha if fecha is not None else valor
+
+
 def _clave_orden_fecha(fila: list) -> tuple:
     """Clave de orden para la columna F (índice 5 en la lista de la fila).
 
@@ -81,20 +94,11 @@ def _clave_orden_fecha(fila: list) -> tuple:
     quedan al final (segundo elemento 1 + algo grande).
     """
     valor = fila[5] if len(fila) > 5 else None
-    if isinstance(valor, datetime):
-        return (0, valor.date())
-    if isinstance(valor, date):
-        return (0, valor)
-    if isinstance(valor, str):
-        texto = valor.strip()
-        # Formato ISO (yyyy-mm-dd) y dd/mm/yyyy.
-        for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d"):
-            try:
-                return (0, datetime.strptime(texto, fmt).date())
-            except ValueError:
-                continue
-        return (1, 0)  # texto no parseable → al final
-    return (1, 0)  # None u otro → al final
+    fecha = parsear_fecha(valor)
+    if fecha is not None:
+        return (0, fecha)
+    # No parseable (None, texto inválido) → al final.
+    return (1, 0)
 
 
 def _detectar_hoja_y_fila(reader: ExcelReader) -> tuple[str, int] | None:
@@ -111,12 +115,14 @@ def _detectar_hoja_y_fila(reader: ExcelReader) -> tuple[str, int] | None:
 
     for hoja in hojas:
         for fila in _FILAS_ENCABEZADO_A_INTENTAR:
+            encs: set[str] = set()
             try:
                 encs = set(
                     reader.leer_encabezados(hoja, fila_encabezado=fila, normalizar=True)
                 )
             except Exception:  # noqa: BLE001
-                continue
+                # Fila no legible: se prueba con la siguiente.
+                encs = set()
             # Si al menos 1 columna objetivo está presente, esta es la hoja correcta.
             if encs & cols_objetivo:
                 return hoja, fila
@@ -178,9 +184,19 @@ def llenar_ventas(ruta_insumo: Path | str, writer: ExcelWriter) -> int:
                 if isinstance(valor, datetime):
                     valor = valor.date()
 
+                # FECHA_TRANSACCION (col F): normalizar a date para que todos
+                # los formatos (2/6/26, 2/6/2026, etc.) se vean dd/mm/yyyy.
+                if col_destino == COL_FECHA_TRANSACCION:
+                    valor = _normalizar_fecha(valor)
+
                 # Aplicar limpieza @ en COD_CAJERO.
                 if col_destino == COL_COD_CAJERO:
                     valor = _limpiar_cod_cajero(valor)
+
+                # Quitar espacios al final del NOMBRE_CAJERO (col K) para que
+                # la búsqueda de cédula por nombre matchee exacto.
+                if col_destino == COL_NOMBRE_CAJERO and isinstance(valor, str):
+                    valor = valor.strip()
 
                 fila_out[col_destino - 1] = valor
             filas_para_escribir.append(fila_out)

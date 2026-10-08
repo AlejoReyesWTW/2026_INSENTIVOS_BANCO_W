@@ -107,36 +107,8 @@ class ValidadorInsumos:
             if errores:
                 errores_por_insumo[tipo] = errores
 
-            # 5. Validar coherencia de mes en el nombre del archivo.
-            if not errores:
-                self._validar_mes_en_nombre(ruta_p, errores)
-            if errores:
-                errores_por_insumo[tipo] = errores
-
         valido = len(errores_por_insumo) == 0
         return ResultadoValidacion(valido=valido, errores=errores_por_insumo)
-
-    def _validar_mes_en_nombre(
-        self,
-        ruta: Path,
-        errores: list[str],
-    ) -> None:
-        """Valida que el mes en el nombre del archivo coincida con el esperado.
-
-        Si el nombre no tiene mes (ej: Base Seguros - Actualizada.xlsx) no
-        se puede verificar y no bloquea. Si lo tiene y difiere del mes
-        esperado (mes actual del sistema), agrega un error.
-        """
-        try:
-            from src.domain.mes_valido import validar_mes_insumos
-
-            resultado = validar_mes_insumos([ruta])
-            if not resultado.valido:
-                for e in resultado.errores:
-                    errores.append(e)
-        except (ImportError, OSError, ValueError, KeyError):
-            # Si la validación de mes no está disponible, no bloquea.
-            pass
 
     def _validar_hojas_y_columnas(
         self,
@@ -257,6 +229,7 @@ class ValidadorInsumos:
         fila_usada = fila_encabezado
 
         for fila in filas_a_intentar:
+            encs: set[str] = set()
             try:
                 encs = set(
                     reader.leer_encabezados(
@@ -266,7 +239,8 @@ class ValidadorInsumos:
                     )
                 )
             except Exception:  # noqa: BLE001
-                continue
+                # Fila no legible: se prueba con la siguiente.
+                encs = set()
 
             # Verificar si al menos UNA columna esperada está en esta fila.
             if any(normalizar_header(c) in encs for c in columnas_requeridas):

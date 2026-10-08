@@ -1,0 +1,139 @@
+[2026-09-16 13:32:20] [INFO] 🧹 Campos limpiados.
+[2026-09-16 13:32:21] [INFO] 🧹 Campos limpiados.
+[2026-09-16 13:32:39] [INFO] Iniciando procesamiento del ciclo...
+[2026-09-16 13:32:39] [INFO] [0%] Iniciando procesamiento del ciclo...
+[2026-09-16 13:32:39] [INFO] [10%] 📄 Armando documento principal: validando archivos de insumo...
+[2026-09-16 13:32:39] [INFO] [15%] ✅ Validación OK: estructura de insumos correcta.
+[2026-09-16 13:32:39] [INFO] [16%] 🗓️ Validando coherencia de mes en los archivos de insumo...
+[2026-09-16 13:32:39] [INFO] [20%] 🗓️ Ciclo detectado: septiembre 2026
+[2026-09-16 13:32:39] [INFO] [25%] 📁 Archivo de salida: base incentivos septiembre 2026 soy prevenido.xlsx
+[2026-09-16 13:32:39] [INFO] [35%] 📋 Plantilla base copiada: base incentivos septiembre 2026 soy prevenido.xlsx
+[2026-09-16 13:32:39] [INFO] [45%] 🔗 Haciendo cruces con archivos excel: llenando pestaña Ventas...
+[2026-09-16 13:32:39] [INFO] [55%] 📊 Ventas: 1 filas escritas.
+[2026-09-16 13:32:39] [INFO] [65%] 🔗 Cruce con base de empleados: llenando Base subgerentes...
+[2026-09-16 13:32:39] [INFO] [72%] 👥 Base subgerentes: 1 filas.
+[2026-09-16 13:32:39] [INFO] [78%] 🔗 Cruce con base de agencias: llenando Base red agencias...
+[2026-09-16 13:32:39] [INFO] [llenar_base_red_agencias] Inicio. Input: C:\Users\ALEJAN~1\AppData\Local\Temp\tmpgfdaxige\Base Seguros - Actualizada.xlsx, Hoja: BANCO
+[2026-09-16 13:32:39] [INFO] [llenar_base_red_agencias] Encabezados leídos (5): ['cedula', 'usuario windows', 'iniciales', 'colaborador', 'cargo']...
+[2026-09-16 13:32:39] [INFO] [llenar_base_red_agencias] Columna CARGO encontrada en idx 4
+[2026-09-16 13:32:39] [INFO] [llenar_base_red_agencias] Mapping construido: 5/5 columnas encontradas: [1, 2, 3, 4, 5]
+[2026-09-16 13:32:39] [INFO] [llenar_base_red_agencias] Total filas leídas del input: 1
+[2026-09-16 13:32:39] [INFO] [llenar_base_red_agencias] Filas que pasaron el filtro CARGO: 1 (de 1 totales)
+[2026-09-16 13:32:39] [INFO] [llenar_base_red_agencias] Muestra USUARIO WINDOWS (uppercase): 'LUGO'
+[2026-09-16 13:32:39] [INFO] [llenar_base_red_agencias] Escritura completada: 1 filas en hoja 'Base red agencias'
+[2026-09-16 13:32:39] [INFO] [83%] 🏦 Base red agencias: 1 filas.
+[2026-09-16 13:32:39] [INFO] [85%] 🧮 Calculando incentivos y cruzando datos de respaldo...
+[2026-09-16 13:32:39] [INFO] [insertar_formulas_ventas] Escribiendo valores en filas 2-2 (1 filas)
+[2026-09-16 13:32:39] [INFO] [diagnostico] Ventas: 1 COD_CAJERO unicos, 1 CODIGO_AGENCIA unicos.
+[2026-09-16 13:32:39] [INFO] [diagnostico] Base red agencias: 1 usuarios unicos.
+[2026-09-16 13:32:39] [INFO] [diagnostico] BUSCARX J: 1/1 matchean (100.0%).
+[2026-09-16 13:32:39] [INFO] [diagnostico] Base subgerentes: 1 COD_AGENCIA unicos.
+[2026-09-16 13:32:39] [INFO] [diagnostico] BUSCARX P/Q: 1/1 matchean (100.0%).
+[2026-09-16 13:32:39] [INFO] [insertar_formulas_ventas] Lookups: 1 usuarios en Base red agencias, 1 COD_AGENCIA en Base subgerentes
+[2026-09-16 13:32:39] [INFO] [insertar_formulas_ventas] Valores escritos en 1 filas
+[2026-09-16 13:32:39] [INFO] [insertar_formulas_ventas] Total: 9 columnas (J, L, M, N, O, P, Q, R, S) con valores computados
+[2026-09-16 13:32:39] [INFO] [88%] 🗂️ Buscando subgerentes faltantes en Directorio Nacional...
+[2026-09-16 13:32:39] [INFO] [2a pasada] No hay P/Q vacías: cruce completo en 1a pasada.
+[2026-09-16 13:32:39] [INFO] [95%] 🧮 Incentivos calculados; P/Q: 0 filas completadas.
+[2026-09-16 13:32:39] [INFO] [96%] 🔄 Aplicando novedades de subgerente (reemplazos por fecha)...
+[2026-09-16 13:32:39] [INFO] [novedades] Sin registros válidos en el archivo.
+[2026-09-16 13:32:39] [INFO] [97%] 🔄 Novedades: 0 reemplazos procesados.
+[2026-09-16 13:32:39] [INFO] [98%] 💾 Guardando archivo Excel principal...
+[2026-09-16 13:32:39] [INFO] Planilla de pago generada: planilla de pago septiembre 2026.xlsx
+[2026-09-16 13:32:39] [INFO] [99%] 📄 Planilla de pago generada correctamente.
+[2026-09-16 13:32:39] [INFO] [100%] 🎉 Procesamiento completado: base incentivos septiembre 2026 soy prevenido.xlsx
+[2026-09-16 13:32:39] [INFO] Procesamiento exitoso: C:\Users\ALEJAN~1\AppData\Local\Temp\tmpgfdaxige\salidas\2026\septiembre\16\base incentivos septiembre 2026 soy prevenido.xlsx
+[2026-09-16 13:32:40] [INFO] ⏱️ Tiempo de ejecución: 0.7s
+[2026-09-16 13:32:40] [INFO]   Ventas: 1 filas
+[2026-09-16 13:32:40] [INFO]   Base subgerentes: 1 filas
+[2026-09-16 13:32:40] [INFO]   Base red agencias: 1 filas
+[2026-09-16 13:32:40] [INFO]   Planilla de pago: planilla de pago septiembre 2026.xlsx
+[2026-09-16 13:35:55] [INFO] Soy Prevenido: archivo validado correctamente.
+[2026-09-16 13:36:09] [INFO] Base Banco Completa SS: archivo validado correctamente.
+[2026-09-16 13:36:15] [INFO] Base Seguros – Actualizada: archivo validado correctamente.
+[2026-09-16 13:36:22] [INFO] Directorio Nacional: archivo validado correctamente.
+[2026-09-16 13:36:29] [INFO] Formato novedades subgerente oficina para seguros: archivo validado correctamente.
+[2026-09-16 13:37:01] [INFO] Iniciando procesamiento del ciclo...
+[2026-09-16 13:37:01] [INFO] [0%] Iniciando procesamiento del ciclo...
+[2026-09-16 13:37:01] [INFO] [10%] 📄 Armando documento principal: validando archivos de insumo...
+[2026-09-16 13:37:01] [INFO] [0%] Iniciando procesamiento del ciclo...
+[2026-09-16 13:37:02] [INFO] [10%] 📄 Armando documento principal: validando archivos de insumo...
+[2026-09-16 13:37:04] [INFO] [15%] ✅ Validación OK: estructura de insumos correcta.
+[2026-09-16 13:37:04] [INFO] [16%] 🗓️ Validando coherencia de mes en los archivos de insumo...
+[2026-09-16 13:37:04] [INFO] [20%] 🗓️ Ciclo detectado: septiembre 2026
+[2026-09-16 13:37:04] [INFO] [25%] 📁 Archivo de salida: base incentivos septiembre 2026 soy prevenido.xlsx
+[2026-09-16 13:37:04] [INFO] [35%] 📋 Plantilla base copiada: base incentivos septiembre 2026 soy prevenido_20260916_133704.xlsx
+[2026-09-16 13:37:04] [INFO] [45%] 🔗 Haciendo cruces con archivos excel: llenando pestaña Ventas...
+[2026-09-16 13:37:04] [INFO] [15%] ✅ Validación OK: estructura de insumos correcta.
+[2026-09-16 13:37:05] [INFO] [16%] 🗓️ Validando coherencia de mes en los archivos de insumo...
+[2026-09-16 13:37:05] [INFO] [20%] 🗓️ Ciclo detectado: septiembre 2026
+[2026-09-16 13:37:05] [INFO] [25%] 📁 Archivo de salida: base incentivos septiembre 2026 soy prevenido.xlsx
+[2026-09-16 13:37:05] [INFO] [35%] 📋 Plantilla base copiada: base incentivos septiembre 2026 soy prevenido_20260916_133704.xlsx
+[2026-09-16 13:37:05] [INFO] [45%] 🔗 Haciendo cruces con archivos excel: llenando pestaña Ventas...
+[2026-09-16 13:37:18] [INFO] [55%] 📊 Ventas: 31361 filas escritas.
+[2026-09-16 13:37:18] [INFO] [65%] 🔗 Cruce con base de empleados: llenando Base subgerentes...
+[2026-09-16 13:37:18] [INFO] [55%] 📊 Ventas: 31361 filas escritas.
+[2026-09-16 13:37:18] [INFO] [65%] 🔗 Cruce con base de empleados: llenando Base subgerentes...
+[2026-09-16 13:37:18] [INFO] [72%] 👥 Base subgerentes: 44 filas.
+[2026-09-16 13:37:18] [INFO] [78%] 🔗 Cruce con base de agencias: llenando Base red agencias...
+[2026-09-16 13:37:18] [INFO] [llenar_base_red_agencias] Inicio. Input: C:\Users\Alejandro Reyes\Desktop\WTW\DocumentosExcelPrueba\Septiembre\Base Seguros - Actualizada.xlsx, Hoja: BANCO
+[2026-09-16 13:37:19] [INFO] [llenar_base_red_agencias] Encabezados leídos (9): ['cedula', 'usuario windows', 'iniciales', 'colaborador', 'cargo', 'regional', 'oficina', 'fecha ingreso']...
+[2026-09-16 13:37:19] [INFO] [llenar_base_red_agencias] Columna CARGO encontrada en idx 4
+[2026-09-16 13:37:19] [INFO] [llenar_base_red_agencias] Mapping construido: 5/5 columnas encontradas: [1, 2, 3, 4, 5]
+[2026-09-16 13:37:19] [INFO] [72%] 👥 Base subgerentes: 44 filas.
+[2026-09-16 13:37:19] [INFO] [78%] 🔗 Cruce con base de agencias: llenando Base red agencias...
+[2026-09-16 13:37:41] [INFO] [llenar_base_red_agencias] Total filas leídas del input: 407
+[2026-09-16 13:37:41] [INFO] [llenar_base_red_agencias] Filas que pasaron el filtro CARGO: 397 (de 407 totales)
+[2026-09-16 13:37:41] [INFO] [llenar_base_red_agencias] Muestra USUARIO WINDOWS (uppercase): 'WYANEZ'
+[2026-09-16 13:37:41] [INFO] [llenar_base_red_agencias] Escritura completada: 397 filas en hoja 'Base red agencias'
+[2026-09-16 13:37:41] [INFO] [83%] 🏦 Base red agencias: 397 filas.
+[2026-09-16 13:37:41] [INFO] [85%] 🧮 Calculando incentivos y cruzando datos de respaldo...
+[2026-09-16 13:37:41] [INFO] [insertar_formulas_ventas] Escribiendo valores en filas 2-31362 (31361 filas)
+[2026-09-16 13:37:41] [INFO] [diagnostico] Ventas: 355 COD_CAJERO unicos, 134 CODIGO_AGENCIA unicos.
+[2026-09-16 13:37:41] [INFO] [diagnostico] Base red agencias: 397 usuarios unicos.
+[2026-09-16 13:37:41] [INFO] [diagnostico] BUSCARX J: 340/355 matchean (95.8%).
+[2026-09-16 13:37:41] [WARNING] [diagnostico] BUSCARX J: 15 COD_CAJERO sin match.
+[2026-09-16 13:37:41] [WARNING] [diagnostico] BUSCARX J: lista no-matches: ['BCASTILLO', 'BRARODRIGUEZGA', 'DANLOPEZSA', 'DMJIMENEZ', 'DPADILLA', 'EPALACIOS', 'HZAMORA', 'JESTACIO', 'JIMBOL', 'LEOGARCIALE', 'LIMEDINA', 'MALOZANO', 'MDAVID', 'VDRADA', 'YBOTERO']
+[2026-09-16 13:37:41] [INFO] [diagnostico] Base subgerentes: 44 COD_AGENCIA unicos.
+[2026-09-16 13:37:41] [INFO] [diagnostico] BUSCARX P/Q: 44/134 matchean (32.8%).
+[2026-09-16 13:37:41] [WARNING] [diagnostico] BUSCARX P/Q: 90 CODIGO_AGENCIA sin match.
+[2026-09-16 13:37:41] [WARNING] [diagnostico] BUSCARX P/Q: muestra 30 no-matches: [5, 10, 11, 12, 15, 18, 20, 21, 23, 25, 27, 28, 32, 34, 36, 41, 42, 45, 46, 47, 48, 50, 52, 53, 58, 59, 61, 62, 63, 64]
+[2026-09-16 13:37:41] [INFO] [insertar_formulas_ventas] Lookups: 397 usuarios en Base red agencias, 44 COD_AGENCIA en Base subgerentes
+[2026-09-16 13:37:41] [INFO] [83%] 🏦 Base red agencias: 397 filas.
+[2026-09-16 13:37:42] [INFO] [insertar_formulas_ventas] Valores escritos en 31361 filas
+[2026-09-16 13:37:42] [INFO] [insertar_formulas_ventas] Total: 9 columnas (J, L, M, N, O, P, Q, R, S) con valores computados
+[2026-09-16 13:37:42] [INFO] [88%] 🗂️ Buscando subgerentes faltantes en Directorio Nacional...
+[2026-09-16 13:37:42] [INFO] [2a pasada] 90 códigos de agencia con P/Q vacía.
+[2026-09-16 13:37:42] [INFO] [2a pasada] Directorio Nacional: 90 subgerentes encontrados.
+[2026-09-16 13:37:42] [INFO] [2a pasada] 90 filas agregadas a Base subgerentes.
+[2026-09-16 13:37:42] [WARNING] [2a pasada] Archivo de correcciones no existe: C:\Users\Alejandro Reyes\Desktop\WTW\2026_INSENTIVOS_BANCO_W\Bases\Correccion_nombres_base_subgerentes.xlsx
+[2026-09-16 13:37:42] [INFO] [2a pasada] Sin archivo de correcciones: se omite la corrección de nombres.
+[2026-09-16 13:37:42] [INFO] [2a pasada] 88 cédulas completadas por nombre.
+[2026-09-16 13:37:42] [INFO] [85%] 🧮 Calculando incentivos y cruzando datos de respaldo...
+[2026-09-16 13:37:43] [INFO] [2a pasada] P/Q refrescadas: 31361 filas.
+[2026-09-16 13:37:43] [INFO] [95%] 🧮 Incentivos calculados; P/Q: 31361 filas completadas.
+[2026-09-16 13:37:43] [INFO] [96%] 🔄 Aplicando novedades de subgerente (reemplazos por fecha)...
+[2026-09-16 13:37:43] [INFO] [novedades] DIANA PATRICIA VELASCO (67023379) → reemplazado por SANDRA MARIA MUÑOZ SAMBONI (1143870593): 0/0 cambiados [] SIN DATOS
+[2026-09-16 13:37:43] [INFO] [novedades] LINA MARCELA LASPRILLA ARCINIEGAS (1112225370) → reemplazado por LUISA MARIA URIBE SINISTERRA (1114834261): 424/785 cambiados [01/06/2026 → 17/06/2026] PARCIAL
+[2026-09-16 13:37:43] [INFO] [novedades] DARIO ACUÑA JIMENEZ (91265023) → reemplazado por ELKIN FERNEY CRISTANCHO ZAMBRANO (1100956414): 341/488 cambiados [01/06/2026 → 22/06/2026] PARCIAL
+[2026-09-16 13:37:43] [INFO] [88%] 🗂️ Buscando subgerentes faltantes en Directorio Nacional...
+[2026-09-16 13:37:43] [INFO] [novedades] ANDREA FERNANDA FERRO BERNAL (25273303) → reemplazado por LADYS TATHIANA CAICEDO MAMBUSCAY (1061693658): 636/654 cambiados [01/06/2026 → 30/06/2026] PARCIAL
+[2026-09-16 13:37:43] [INFO] [novedades] GISELA ZAMORA DIAZ (1110515935) → reemplazado por SIMON FERNANDO PACHECO (1110543191): 165/358 cambiados [10/06/2026 → 30/06/2026] PARCIAL
+[2026-09-16 13:37:43] [INFO] [novedades] MARIA EUGENIA VILLAN MESA (66951164) → reemplazado por SANDRA MARIA MUÑOZ SAMBONI (1143870593): 272/815 cambiados [17/06/2026 → 30/06/2026] PARCIAL
+[2026-09-16 13:37:43] [INFO] [97%] 🔄 Novedades: 6 reemplazos procesados.
+[2026-09-16 13:37:43] [INFO] [95%] 🧮 Incentivos calculados; P/Q: 31361 filas completadas.
+[2026-09-16 13:37:44] [INFO] [96%] 🔄 Aplicando novedades de subgerente (reemplazos por fecha)...
+[2026-09-16 13:37:45] [INFO] [97%] 🔄 Novedades: 6 reemplazos procesados.
+[2026-09-16 13:38:00] [INFO] [98%] 💾 Guardando archivo Excel principal...
+[2026-09-16 13:38:00] [INFO] [98%] 💾 Guardando archivo Excel principal...
+[2026-09-16 13:38:18] [INFO] Planilla de pago generada: planilla de pago septiembre 2026.xlsx
+[2026-09-16 13:38:18] [INFO] [99%] 📄 Planilla de pago generada correctamente.
+[2026-09-16 13:38:18] [INFO] [100%] 🎉 Procesamiento completado: base incentivos septiembre 2026 soy prevenido_20260916_133704.xlsx
+[2026-09-16 13:38:18] [INFO] Procesamiento exitoso: C:\Users\Alejandro Reyes\Desktop\WTW\2026_INSENTIVOS_BANCO_W\salidas\2026\septiembre\16\base incentivos septiembre 2026 soy prevenido_20260916_133704.xlsx
+[2026-09-16 13:38:18] [INFO] [99%] 📄 Planilla de pago generada correctamente.
+[2026-09-16 13:38:18] [INFO] [100%] 🎉 Procesamiento completado: base incentivos septiembre 2026 soy prevenido_20260916_133704.xlsx
+[2026-09-16 13:38:18] [INFO] ⏱️ Tiempo de ejecución: 76.6s
+[2026-09-16 13:38:18] [INFO]   Ventas: 31361 filas
+[2026-09-16 13:38:18] [INFO]   Base subgerentes: 44 filas
+[2026-09-16 13:38:18] [INFO]   Base red agencias: 397 filas
+[2026-09-16 13:38:18] [INFO]   Planilla de pago: planilla de pago septiembre 2026.xlsx

@@ -230,6 +230,13 @@
           "INICIALES",
           "COLABORADOR",
           "CARGO"
+        ],
+        "TEMPORAL": [
+          "CEDULA",
+          "USUARIO WINDOWS",
+          "INICIALES",
+          "COLABORADOR",
+          "CARGO"
         ]
       }
     },

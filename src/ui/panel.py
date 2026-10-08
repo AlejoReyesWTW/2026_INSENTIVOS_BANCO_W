@@ -272,7 +272,7 @@ class Panel:
                 self, "_tiempo_inicio", time.monotonic()
             )
             ruta_carpeta = resultado.ruta_salida.parent.resolve()
-            self._log(f"⏱️ Tiempo de ejecución: {segundos:.1f}s")
+            self._log(f"⏱️ Tiempo de ejecución: {_formatear_tiempo(segundos)}")
             self._log(f"📁 Archivos guardados en: {ruta_carpeta}")
             self._log(f"  Ventas: {resultado.filas_ventas} filas")
             self._log(f"  Base subgerentes: {resultado.filas_base_subgerentes} filas")
@@ -283,6 +283,19 @@ class Panel:
                 self._log(f"  Planilla de pago: {resultado.ruta_planilla_pago.name}")
             self.tab_archivos.mostrar_archivos_salida(archivos_salida)
             self.tab_archivos.set_tiempo_ejecucion(segundos)
+
+            # Advertencia: cajeros sin cédula (columna J vacía).
+            faltantes = getattr(resultado, "cajeros_faltantes", None) or []
+            if faltantes:
+                self.tab_archivos.mostrar_advertencia_faltantes(faltantes)
+                self._log(
+                    f"⚠️ {len(faltantes)} CAJERO(S) SIN CÉDULA (columna J vacía): "
+                    + ", ".join(faltantes),
+                    "ERROR",
+                )
+            else:
+                self.tab_archivos.ocultar_advertencia_faltantes()
+
             # Se CONSERVAN los insumos de entrada y las cards hasta que el
             # usuario oprima "Limpiar todo".
             self.tab_archivos.btn_limpiar.configure(state="normal")
@@ -290,7 +303,7 @@ class Panel:
             segundos = time.monotonic() - getattr(
                 self, "_tiempo_inicio", time.monotonic()
             )
-            self._log(f"⏱️ Tiempo hasta el error: {segundos:.1f}s", "ERROR")
+            self._log(f"⏱️ Tiempo hasta el error: {_formatear_tiempo(segundos)}", "ERROR")
             for e in resultado.errores:
                 self._log(e, "ERROR")
                 self._error(e)
@@ -303,6 +316,21 @@ class Panel:
     def ejecutar(self) -> None:
         """Inicia el mainloop de la UI."""
         self.app.mainloop()
+
+
+def _formatear_tiempo(segundos: float) -> str:
+    """Formatea el tiempo: 'X min Y s' si supera 60s, si no 'X.Xs'."""
+    try:
+        if segundos >= 60:
+            minutos = int(segundos // 60)
+            resto = int(round(segundos % 60))
+            if resto == 60:
+                minutos += 1
+                resto = 0
+            return f"{minutos} min {resto} s"
+        return f"{segundos:.1f}s"
+    except (TypeError, ValueError):
+        return str(segundos)
 
 
 # Asegurar que los directorios de salida/logs existan.

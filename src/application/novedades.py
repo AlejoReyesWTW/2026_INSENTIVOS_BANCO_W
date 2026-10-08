@@ -22,13 +22,14 @@ Columnas de Ventas:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
 import openpyxl
 
+from src.domain.fecha import parsear_fecha
 from src.infrastructure.excel_writer import ExcelWriter
 
 # Columnas del insumo (1-based).
@@ -46,7 +47,6 @@ _COL_VENTAS_S = 19
 
 _FILA_ENCABEZADO = 3
 
-_FORMATOS_FECHA = ("%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y", "%Y/%m/%d")
 
 
 class EstadoNovedad(str, Enum):
@@ -174,24 +174,8 @@ def _texto(valor) -> str:
 
 
 def _parsear_fecha(valor) -> date | None:
-    """Convierte un valor a date; None si no se puede parsear.
-
-    Acepta date, datetime y strings en formatos dd/mm/yyyy, yyyy-mm-dd,
-    dd-mm-yyyy, yyyy/mm/dd.
-    """
-    if isinstance(valor, datetime):
-        return valor.date()
-    if isinstance(valor, date):
-        return valor
-    if not isinstance(valor, str):
-        return None
-    texto = valor.strip()
-    for fmt in _FORMATOS_FECHA:
-        try:
-            return datetime.strptime(texto, fmt).date()
-        except ValueError:
-            continue
-    return None
+    """Convierte un valor a date usando el parser central (todos los formatos)."""
+    return parsear_fecha(valor)
 
 
 def aplicar_novedades(

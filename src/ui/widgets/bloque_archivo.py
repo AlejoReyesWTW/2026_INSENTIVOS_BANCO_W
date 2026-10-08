@@ -36,7 +36,7 @@ class BloqueArchivo(ctk.CTkFrame):
 
     def __init__(
         self,
-        parent: ctk.CTkFrame | ctk.CTk,
+        parent: ctk.CTkFrame | ctk.CTkScrollableFrame | ctk.CTk,
         tipo: TipoInsumo,
         on_change: callable = None,  # type: ignore[type-arg]
     ) -> None:
