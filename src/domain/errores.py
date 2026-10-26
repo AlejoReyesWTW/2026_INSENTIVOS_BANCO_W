@@ -41,3 +41,12 @@ class MesAnioNoDetectadoError(DominioError):
 
 class PlantillaNoEncontradaError(DominioError):
     """La plantilla de salida no existe en la ruta esperada."""
+
+
+class CruceDatosInsumoError(DominioError):
+    """El copiado a la pestaña Ventas no coincide con el insumo de origen.
+
+    Se lanza cuando la verificación posterior al llenado detecta que las
+    filas del archivo generado no corresponden a las del insumo (por ejemplo,
+    un archivo de entrada con columnas desordenadas).
+    """

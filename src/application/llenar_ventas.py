@@ -10,9 +10,12 @@ columnas esperadas en cada hoja del archivo.
 
 from __future__ import annotations
 
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+import openpyxl
 
 from src.domain.fecha import parsear_fecha
 from src.domain.mapeo import normalizar_header
@@ -224,3 +227,163 @@ def llenar_ventas(ruta_insumo: Path | str, writer: ExcelWriter) -> int:
         return len(filas_para_escribir)
     finally:
         reader.cerrar()
+
+
+# ---------------------------------------------------------------------------
+# Verificación de copiado: insumo → pestaña Ventas
+# ---------------------------------------------------------------------------
+
+# Columnas de la salida (1-based) que forman la huella de cada venta.
+_COL_HUELLA_ID = 3  # C IDENTIFICACION
+_COL_HUELLA_CUENTA = 5  # E CUENTA CLIENTE
+_COL_HUELLA_PRIMA = 7  # G VALOR PRIMA
+
+# Nombres de columna del insumo que forman la misma huella.
+_HUELLA_INSUMOS = ("NUMERO_IDENTIFICACION", "CUENTA_CLIENTE", "VALOR_PRIMA")
+
+
+def _clave_texto(valor: Any) -> str:
+    """Normaliza un valor a texto comparable (123.0 → '123')."""
+    if valor is None:
+        return ""
+    if isinstance(valor, float) and valor.is_integer():
+        return str(int(valor))
+    return str(valor).strip()
+
+
+def _clave_prima(valor: Any) -> str:
+    """Normaliza el valor de prima a texto entero (11597.0 → '11597')."""
+    texto = _clave_texto(valor)
+    try:
+        return str(int(float(texto)))
+    except (TypeError, ValueError):
+        return texto
+
+
+def _huella(identificacion: Any, cuenta: Any, prima: Any) -> tuple[str, str, str]:
+    """Arma la huella de una venta: (identificación, cuenta, prima)."""
+    return (
+        _clave_texto(identificacion),
+        _clave_texto(cuenta),
+        _clave_prima(prima),
+    )
+
+
+def _huellas_insumo(ruta_insumo: Path | str) -> Counter:
+    """Lee el insumo y devuelve el multiconjunto de huellas de sus ventas."""
+    reader = ExcelReader(ruta_insumo)
+    try:
+        deteccion = _detectar_hoja_y_fila(reader)
+        if deteccion is None:
+            return Counter()
+        nombre_hoja, fila_encabezado = deteccion
+        datos = reader.leer_hoja(
+            nombre_hoja, fila_encabezado=fila_encabezado, normalizar=True
+        )
+        claves = [normalizar_header(c) for c in _HUELLA_INSUMOS]
+        huellas: Counter = Counter()
+        for fila in datos:
+            if not all(clave in fila for clave in claves):
+                continue
+            huellas[
+                _huella(fila[claves[0]], fila[claves[1]], fila[claves[2]])
+            ] += 1
+        return huellas
+    finally:
+        reader.cerrar()
+
+
+def _huellas_salida(ruta_salida: Path | str, fila_fin: int) -> Counter:
+    """Lee la pestaña Ventas y devuelve el multiconjunto de huellas."""
+    wb = openpyxl.load_workbook(ruta_salida, data_only=True, read_only=True)
+    try:
+        ws = wb["Ventas"]
+        huellas: Counter = Counter()
+        for fila in ws.iter_rows(min_row=2, max_row=fila_fin, values_only=True):
+            if fila is None:
+                continue
+            valores = (
+                fila[_COL_HUELLA_ID - 1] if len(fila) >= _COL_HUELLA_ID else None,
+                fila[_COL_HUELLA_CUENTA - 1]
+                if len(fila) >= _COL_HUELLA_CUENTA
+                else None,
+                fila[_COL_HUELLA_PRIMA - 1]
+                if len(fila) >= _COL_HUELLA_PRIMA
+                else None,
+            )
+            if all(v is None for v in valores):
+                continue
+            huellas[_huella(*valores)] += 1
+        return huellas
+    finally:
+        wb.close()
+
+
+def _ejemplo_diferencia(esperado: Counter, obtenido: Counter):
+    """Devuelve (id, cuenta, prima_insumo, prima_archivo) de una diferencia."""
+    for huella, cantidad in esperado.items():
+        if obtenido.get(huella, 0) < cantidad:
+            identificacion, cuenta, prima_insumo = huella
+            candidatas = sorted(
+                {h[2] for h in obtenido if h[0] == identificacion and h[1] == cuenta}
+            )
+            prima_archivo = ", ".join(candidatas) if candidatas else "(no está)"
+            return identificacion, cuenta, prima_insumo, prima_archivo
+    for huella, cantidad in obtenido.items():
+        if esperado.get(huella, 0) < cantidad:
+            identificacion, cuenta, prima_archivo = huella
+            candidatas = sorted(
+                {h[2] for h in esperado if h[0] == identificacion and h[1] == cuenta}
+            )
+            prima_insumo = ", ".join(candidatas) if candidatas else "(no está)"
+            return identificacion, cuenta, prima_insumo, prima_archivo
+    return None
+
+
+def verificar_copiado_ventas(
+    ruta_insumo: Path | str,
+    ruta_salida: Path | str,
+    fila_fin: int,
+) -> None:
+    """Verifica que la pestaña Ventas copió fielmente (id, cuenta, prima).
+
+    Compara el multiconjunto de huellas del insumo contra el de la pestaña
+    Ventas generada. No le importa el orden de las filas (Ventas se ordena
+    por fecha), solo que exista la misma cantidad de cada venta.
+
+    Args:
+        ruta_insumo: ruta al archivo SOY PREVENIDO usado como entrada.
+        ruta_salida: ruta al archivo generado.
+        fila_fin: última fila de datos de Ventas (1-based, inclusiva).
+
+    Raises:
+        CruceDatosInsumoError: si las huellas no coinciden. El mensaje indica
+            cuántas filas difieren y un ejemplo concreto.
+    """
+    from src.domain.errores import CruceDatosInsumoError
+
+    esperado = _huellas_insumo(ruta_insumo)
+    obtenido = _huellas_salida(ruta_salida, fila_fin)
+    if esperado == obtenido:
+        return
+
+    faltantes = sum((esperado - obtenido).values())
+    sobrantes = sum((obtenido - esperado).values())
+    diferencia = _ejemplo_diferencia(esperado, obtenido)
+    detalle = ""
+    if diferencia is not None:
+        identificacion, cuenta, prima_insumo, prima_archivo = diferencia
+        detalle = (
+            f" Ejemplo: asegurado {identificacion or '(vacío)'} / "
+            f"cuenta {cuenta or '(vacía)'} -> "
+            f"prima en el insumo {prima_insumo or '(vacía)'}; "
+            f"prima en el archivo {prima_archivo}."
+        )
+
+    raise CruceDatosInsumoError(
+        "El copiado a la pestaña Ventas NO coincide con el insumo: "
+        f"{faltantes} fila(s) del insumo no están en el generado y "
+        f"{sobrantes} fila(s) del generado no están en el insumo."
+        f"{detalle} Revise que el archivo de entrada no tenga columnas "
+        "desordenadas (agencia, asegurado, cuenta y prima de la misma fila)."
+    )
