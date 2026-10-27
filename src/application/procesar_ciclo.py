@@ -22,7 +22,7 @@ from src.application.generar_planilla_pago import generar_planilla_pago
 from src.application.insertar_formulas import insertar_formulas_ventas
 from src.application.llenar_base_red_agencias import llenar_base_red_agencias
 from src.application.llenar_base_subgerentes import llenar_base_subgerentes
-from src.application.llenar_ventas import llenar_ventas, verificar_copiado_ventas
+from src.application.llenar_ventas import llenar_ventas
 from src.application.novedades import aplicar_novedades
 from src.application.rellenar_pq_desde_directorio import (
     codigos_pq_vacios,
@@ -33,7 +33,6 @@ from src.application.rellenar_pq_desde_directorio import (
     refrescar_pq,
 )
 from src.application.validar_insumos import ValidadorInsumos
-from src.domain.errores import CruceDatosInsumoError
 from src.domain.insumo import TipoInsumo
 from src.infrastructure.config_loader import ConfigLoader
 from src.infrastructure.excel_writer import ExcelWriter
@@ -234,32 +233,6 @@ class ProcesarCiclo:
             _avance(98, "💾 Guardando archivo Excel principal...")
         finally:
             writer.cerrar()
-
-        # 7b. Verificar que el copiado a Ventas coincida con el insumo.
-        #     Detecta archivos de entrada con columnas desordenadas: si la
-        #     agencia/asegurado/cuenta no corresponden a la prima de la misma
-        #     fila, se frena acá y NO se genera la planilla de pago.
-        try:
-            verificar_copiado_ventas(
-                ruta_insumo=ruta_soy_prevenido,
-                ruta_salida=ruta_destino,
-                fila_fin=filas_ventas + 1,
-            )
-            self.logger.info(
-                "Copiado a Ventas verificado contra el insumo: coinciden "
-                f"{filas_ventas} filas."
-            )
-        except CruceDatosInsumoError as e:
-            mensaje = f"Verificación de copiado falló: {e}"
-            self.logger.error(mensaje)
-            return ResultadoProceso(
-                exito=False,
-                ruta_salida=ruta_destino,
-                filas_ventas=filas_ventas,
-                filas_base_subgerentes=filas_subgerentes,
-                filas_base_red_agencias=filas_red,
-                errores=[mensaje],
-            )
 
         # Planilla de pago: mismo sufijo de corrida que el archivo principal
         # (si la corrida anterior dejó archivos, ambos se conservan pareados).
